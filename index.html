@@ -1,0 +1,660 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LEXIS · English Proficiency Assessment</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&family=Sora:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#F5EFE6;
+  --card:#FFFDF9;
+  --ink:#1C1810;
+  --ink-mid:#4A4035;
+  --ink-muted:#8A7F72;
+  --accent:#B85C00;
+  --accent-light:#FFF3E8;
+  --accent-dark:#8A4400;
+  --border:#E0D6C8;
+  --border-light:#EDE8E0;
+  --success:#2A6348;
+  --success-light:#E8F5EE;
+  --error:#8B1F1F;
+  --error-light:#FBE8E8;
+  --shadow:0 2px 12px rgba(28,24,16,.08);
+  --shadow-lg:0 8px 32px rgba(28,24,16,.14);
+  --r:12px
+}
+html{font-size:16px;scroll-behavior:smooth}
+body{font-family:'Sora',sans-serif;background:var(--bg);color:var(--ink);min-height:100vh;line-height:1.6}
+h1,h2,h3{font-family:'Cormorant Garamond',Georgia,serif;line-height:1.2}
+
+/* ── Screens ── */
+.screen{display:none;min-height:100vh}
+.screen.active{display:flex;flex-direction:column}
+@keyframes fadeUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+.screen.active>*{animation:fadeUp .35s ease forwards}
+
+/* ── INTRO ── */
+#screen-intro{align-items:center;justify-content:center;padding:2rem}
+.intro-wrap{max-width:620px;width:100%}
+.brand-mark{font-family:'Cormorant Garamond',serif;font-size:5rem;font-weight:700;letter-spacing:.14em;color:var(--ink);line-height:1}
+.brand-mark em{color:var(--accent);font-style:normal}
+.brand-sub{font-size:.72rem;font-weight:500;letter-spacing:.22em;text-transform:uppercase;color:var(--ink-muted);margin:.4rem 0 1.8rem}
+.divider{width:44px;height:2px;background:var(--accent);margin-bottom:1.8rem}
+.intro-body{font-size:.9rem;color:var(--ink-mid);line-height:1.85;margin-bottom:1.8rem}
+.intro-meta{display:flex;gap:2rem;margin-bottom:2.2rem}
+.meta-item{display:flex;flex-direction:column;gap:.15rem}
+.meta-lbl{font-size:.65rem;letter-spacing:.15em;text-transform:uppercase;color:var(--ink-muted)}
+.meta-val{font-size:.88rem;font-weight:500}
+.field-lbl{font-size:.68rem;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-muted);margin-bottom:.65rem}
+.exam-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:.55rem;margin-bottom:1.8rem}
+.exam-btn{padding:.8rem .4rem;border:1.5px solid var(--border);background:var(--card);border-radius:var(--r);cursor:pointer;transition:all .2s;text-align:center}
+.exam-btn .en{font-family:'Cormorant Garamond',serif;font-size:1.2rem;font-weight:600;display:block;color:var(--ink)}
+.exam-btn .cn{font-size:.62rem;color:var(--ink-muted);letter-spacing:.06em}
+.exam-btn:hover,.exam-btn.selected{border-color:var(--accent);background:var(--accent-light)}
+.exam-btn.selected .en{color:var(--accent-dark)}
+.start-btn{width:100%;padding:1rem 2rem;background:var(--ink);color:#F5EFE6;border:none;border-radius:var(--r);font-family:'Sora',sans-serif;font-size:.88rem;font-weight:500;letter-spacing:.07em;cursor:pointer;transition:all .25s;display:flex;align-items:center;justify-content:center;gap:.5rem}
+.start-btn:hover{background:var(--accent);transform:translateY(-2px);box-shadow:var(--shadow)}
+.start-btn:disabled{opacity:.45;cursor:not-allowed;transform:none;box-shadow:none}
+.privacy-note{font-size:.7rem;color:var(--ink-muted);text-align:center;margin-top:.9rem}
+
+/* ── TEST HEADER ── */
+#screen-test{flex-direction:column}
+.test-hdr{padding:1.1rem 2rem;border-bottom:1px solid var(--border-light);background:var(--card);display:flex;align-items:center;justify-content:space-between;gap:1rem;position:sticky;top:0;z-index:10;box-shadow:0 1px 0 var(--border-light)}
+.hdr-brand{font-family:'Cormorant Garamond',serif;font-size:1.35rem;font-weight:600;letter-spacing:.1em}
+.hdr-brand em{color:var(--accent);font-style:normal}
+.sec-pips{display:flex;gap:.4rem;align-items:center}
+.pip{width:30px;height:4px;border-radius:2px;background:var(--border);transition:background .3s}
+.pip.done{background:var(--success)}
+.pip.active{background:var(--accent)}
+.q-counter{font-size:.75rem;color:var(--ink-muted);white-space:nowrap;min-width:120px;text-align:right}
+
+/* ── TEST BODY ── */
+.test-body{flex:1;display:flex;align-items:flex-start;justify-content:center;padding:2.5rem 1.5rem 3rem}
+.q-card{max-width:680px;width:100%}
+.q-badge{display:inline-flex;align-items:center;gap:.45rem;padding:.28rem .75rem;border-radius:100px;background:var(--accent-light);border:1px solid #F0C890;font-size:.68rem;font-weight:600;letter-spacing:.09em;text-transform:uppercase;color:var(--accent-dark);margin-bottom:1.4rem}
+.diff-dots{display:flex;gap:3px;align-items:center;margin-left:2px}
+.ddot{width:5px;height:5px;border-radius:50%;background:rgba(184,92,0,.2)}
+.ddot.on{background:var(--accent)}
+.passage{background:var(--card);border:1px solid var(--border);border-left:3px solid var(--accent);border-radius:0 var(--r) var(--r) 0;padding:1.1rem 1.4rem;margin-bottom:1.4rem;font-size:.875rem;line-height:1.85;color:var(--ink-mid);font-style:italic}
+.q-text{font-family:'Cormorant Garamond',serif;font-size:1.5rem;font-weight:500;line-height:1.45;color:var(--ink);margin-bottom:1.6rem}
+.opts{display:grid;gap:.55rem}
+.opt{display:flex;align-items:flex-start;gap:.75rem;padding:.95rem 1.2rem;background:var(--card);border:1.5px solid var(--border);border-radius:var(--r);cursor:pointer;transition:all .18s;text-align:left;width:100%;font-family:inherit}
+.opt-letter{min-width:24px;height:24px;border-radius:50%;background:var(--border-light);border:1.5px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:.68rem;font-weight:600;color:var(--ink-muted);transition:all .18s;flex-shrink:0;margin-top:1px}
+.opt-text{font-size:.875rem;color:var(--ink-mid);line-height:1.5}
+.opt:hover:not(:disabled){border-color:var(--accent);background:var(--accent-light)}
+.opt:hover:not(:disabled) .opt-letter{background:var(--accent);border-color:var(--accent);color:#fff}
+.opt.correct{border-color:var(--success);background:var(--success-light)}
+.opt.correct .opt-letter{background:var(--success);border-color:var(--success);color:#fff}
+.opt.wrong{border-color:var(--error);background:var(--error-light)}
+.opt.wrong .opt-letter{background:var(--error);border-color:var(--error);color:#fff}
+.opt:disabled{cursor:default}
+.feedback{margin-top:1.1rem;padding:.85rem 1.2rem;border-radius:var(--r);font-size:.83rem;line-height:1.65;display:none}
+.feedback.ok{background:var(--success-light);border:1px solid #A8D5BC;color:var(--success);display:block}
+.feedback.no{background:var(--error-light);border:1px solid #F0B0B0;color:var(--error);display:block}
+.next-btn{margin-top:1.4rem;padding:.85rem 1.7rem;background:var(--ink);color:#F5EFE6;border:none;border-radius:var(--r);font-family:'Sora',sans-serif;font-size:.83rem;font-weight:500;letter-spacing:.06em;cursor:pointer;transition:all .2s;display:none}
+.next-btn:hover{background:var(--accent);transform:translateY(-1px)}
+
+/* ── SECTION END ── */
+#screen-section-end{align-items:center;justify-content:center;padding:2rem}
+.sec-end-card{max-width:420px;width:100%;background:var(--card);border:1px solid var(--border);border-radius:20px;padding:2.8rem 2.4rem;text-align:center;box-shadow:var(--shadow-lg)}
+.sec-icon{font-size:2.4rem;margin-bottom:.9rem;display:block}
+.sec-end-title{font-family:'Cormorant Garamond',serif;font-size:2rem;font-weight:600;color:var(--ink);margin-bottom:.3rem}
+.sec-end-sub{font-size:.8rem;color:var(--ink-muted);margin-bottom:1.8rem}
+.score-big{font-family:'Cormorant Garamond',serif;font-size:4.5rem;font-weight:600;color:var(--accent);line-height:1}
+.score-lbl{font-size:.7rem;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-muted);margin-top:.2rem}
+.sec-msg{font-size:.82rem;color:var(--ink-mid);margin:1.2rem 0 1.6rem;line-height:1.6}
+.cont-btn{width:100%;padding:.9rem 1.5rem;background:var(--ink);color:#F5EFE6;border:none;border-radius:var(--r);font-family:'Sora',sans-serif;font-size:.88rem;font-weight:500;cursor:pointer;transition:all .2s}
+.cont-btn:hover{background:var(--accent);transform:translateY(-1px)}
+
+/* ── RESULTS ── */
+#screen-results{padding:3rem 1.5rem 4rem;align-items:center}
+.res-wrap{max-width:720px;width:100%}
+.res-hdr h1{font-size:3rem;font-weight:600;line-height:1.05;margin-bottom:.3rem}
+.res-hdr p{font-size:.82rem;color:var(--ink-muted);margin-bottom:2.2rem}
+.overall-card{background:var(--ink);border-radius:20px;padding:2.2rem 2.4rem;color:#F5EFE6;display:flex;align-items:center;justify-content:space-between;gap:2rem;margin-bottom:1.4rem}
+.ov-left h2{font-size:.68rem;font-weight:500;letter-spacing:.2em;text-transform:uppercase;opacity:.55;margin-bottom:.45rem}
+.ov-level{font-family:'Cormorant Garamond',serif;font-size:2.5rem;font-weight:600;line-height:1.1;margin-bottom:.4rem}
+.ov-level span{font-size:1.3rem;opacity:.65}
+.ov-desc{font-size:.78rem;opacity:.65;max-width:280px;line-height:1.55}
+.ring-wrap{flex-shrink:0;width:96px;height:96px;position:relative}
+.ring-wrap svg{display:block}
+.score-ring-num{font-family:'Cormorant Garamond',serif;font-size:1.75rem;font-weight:600;color:#F0C060;line-height:1}
+.score-ring-pct{font-size:.6rem;opacity:.55}
+.ring-text{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center;line-height:1.2}
+.secs-grid{display:grid;gap:.9rem;margin-bottom:1.8rem}
+.src{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:1.4rem}
+.src-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:.9rem}
+.src-left{display:flex;align-items:center;gap:.55rem}
+.src-ico{width:32px;height:32px;border-radius:8px;background:var(--accent-light);display:flex;align-items:center;justify-content:center;font-size:.9rem}
+.src-name{font-weight:500;font-size:.88rem}
+.src-sub{font-size:.68rem;color:var(--ink-muted)}
+.src-pct{font-family:'Cormorant Garamond',serif;font-size:1.1rem;font-weight:600;padding:.18rem .55rem;border-radius:6px;background:var(--accent-light);color:var(--accent-dark)}
+.bar-bg{background:var(--border-light);border-radius:100px;height:5px;overflow:hidden;margin-bottom:.7rem}
+.bar-fill{height:100%;border-radius:100px;background:var(--accent);width:0%;transition:width 1s ease .1s}
+.lvl-tag{font-size:.67rem;font-weight:600;letter-spacing:.07em;text-transform:uppercase;padding:.14rem .5rem;border-radius:4px;display:inline-block}
+.lvl-beginner{background:#FBE8E8;color:#8B1F1F}
+.lvl-elementary{background:#FFF3D6;color:#7A5100}
+.lvl-intermediate{background:#E8F5EE;color:#2A6348}
+.lvl-advanced{background:#EAE8FF;color:#3A2E8A}
+.rec-section{margin-top:2.4rem}
+.rec-hdr{font-family:'Cormorant Garamond',serif;font-size:1.9rem;font-weight:600;margin-bottom:1.4rem}
+.rec-card{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:1.4rem;margin-bottom:.9rem}
+.rec-card-top{display:flex;align-items:center;gap:.5rem;margin-bottom:.9rem}
+.rec-card-name{font-weight:600;font-size:.88rem}
+.rec-chip{font-size:.63rem;font-weight:600;padding:.13rem .48rem;border-radius:4px}
+.rec-diag{font-size:.875rem;color:var(--ink-mid);line-height:1.7;margin-bottom:.9rem;padding-bottom:.9rem;border-bottom:1px solid var(--border-light)}
+.rec-steps{list-style:none;display:flex;flex-direction:column;gap:.48rem}
+.rec-step{display:flex;align-items:flex-start;gap:.55rem;font-size:.83rem;color:var(--ink-mid);line-height:1.55}
+.rec-step::before{content:"→";color:var(--accent);font-weight:700;flex-shrink:0;margin-top:1px}
+.exam-card{background:var(--accent-light);border:1px solid #F0C890;border-radius:var(--r);padding:1.4rem;margin-top:1.4rem}
+.exam-card-title{font-family:'Cormorant Garamond',serif;font-size:1.2rem;font-weight:600;color:var(--accent-dark);margin-bottom:.6rem}
+.exam-card-text{font-size:.85rem;color:var(--ink-mid);line-height:1.75}
+.retake-btn{margin-top:2.2rem;padding:.85rem 1.8rem;border:1.5px solid var(--border);background:transparent;color:var(--ink);border-radius:var(--r);font-family:'Sora',sans-serif;font-size:.83rem;font-weight:500;cursor:pointer;transition:all .2s;letter-spacing:.04em}
+.retake-btn:hover{border-color:var(--accent);color:var(--accent)}
+
+/* ── Responsive ── */
+@media(max-width:560px){
+  .exam-grid{grid-template-columns:repeat(2,1fr)}
+  .brand-mark{font-size:3.8rem}
+  .overall-card{flex-direction:column;text-align:center}
+  .ov-desc{max-width:100%}
+  .test-body{padding:1.5rem 1rem 2.5rem}
+  .test-hdr{padding:.9rem 1rem}
+  .q-text{font-size:1.3rem}
+}
+</style>
+</head>
+<body>
+
+<!-- ═══════════════ SCREEN 1: INTRO ═══════════════ -->
+<div id="screen-intro" class="screen active">
+  <div style="flex:1;display:flex;align-items:center;justify-content:center;padding:2rem">
+    <div class="intro-wrap">
+      <div class="brand-mark">L<em>E</em>XIS</div>
+      <div class="brand-sub">Adaptive English Proficiency Assessment</div>
+      <div class="divider"></div>
+      <p class="intro-body">
+        涵盖 <strong>Vocabulary · Grammar · Reading · Writing</strong> 四个核心维度，共 20 道自适应题目。
+        系统采用 <em>Computer Adaptive Testing（CAT）</em> 算法，根据你的实时作答动态调整题目难度，
+        测试结束后提供针对不同备考目标的个性化学习路径建议。
+      </p>
+      <div class="intro-meta">
+        <div class="meta-item"><span class="meta-lbl">题目数量</span><span class="meta-val">20 questions</span></div>
+        <div class="meta-item"><span class="meta-lbl">预计用时</span><span class="meta-val">15 – 20 min</span></div>
+        <div class="meta-item"><span class="meta-lbl">测试算法</span><span class="meta-val">Adaptive CAT</span></div>
+        <div class="meta-item"><span class="meta-lbl">难度范围</span><span class="meta-val">CET-4 → TOEFL</span></div>
+      </div>
+      <div class="field-lbl">选择备考目标 · Select Your Target Exam</div>
+      <div class="exam-grid">
+        <button class="exam-btn" data-exam="toefl" onclick="selectExam(this)">
+          <span class="en">TOEFL</span><span class="cn">iBT 托福</span>
+        </button>
+        <button class="exam-btn" data-exam="ielts" onclick="selectExam(this)">
+          <span class="en">IELTS</span><span class="cn">雅思</span>
+        </button>
+        <button class="exam-btn" data-exam="cet6" onclick="selectExam(this)">
+          <span class="en">CET-6</span><span class="cn">六级</span>
+        </button>
+        <button class="exam-btn" data-exam="cet4" onclick="selectExam(this)">
+          <span class="en">CET-4</span><span class="cn">四级</span>
+        </button>
+      </div>
+      <button class="start-btn" id="start-btn" onclick="startTest()" disabled>开始测试 &nbsp;→</button>
+      <p class="privacy-note">所有数据仅在本地浏览器运行，不上传、不存储</p>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════ SCREEN 2: TEST ═══════════════ -->
+<div id="screen-test" class="screen">
+  <header class="test-hdr">
+    <div class="hdr-brand">L<em>E</em>XIS</div>
+    <div class="sec-pips">
+      <div class="pip" id="pip-0"></div>
+      <div class="pip" id="pip-1"></div>
+      <div class="pip" id="pip-2"></div>
+      <div class="pip" id="pip-3"></div>
+    </div>
+    <div class="q-counter" id="q-counter">Vocabulary · 1 / 5</div>
+  </header>
+  <div class="test-body">
+    <div class="q-card" id="q-card"></div>
+  </div>
+</div>
+
+<!-- ═══════════════ SCREEN 3: SECTION END ═══════════════ -->
+<div id="screen-section-end" class="screen">
+  <div style="flex:1;display:flex;align-items:center;justify-content:center;padding:2rem">
+    <div class="sec-end-card">
+      <span class="sec-icon" id="sec-icon">✦</span>
+      <div class="sec-end-title" id="sec-title">Section Complete</div>
+      <div class="sec-end-sub" id="sec-sub">Vocabulary · 3 / 5 correct</div>
+      <div class="score-big" id="sec-score">—</div>
+      <div class="score-lbl">Weighted Score</div>
+      <p class="sec-msg" id="sec-msg">做得不错！每一道题都是进步。</p>
+      <button class="cont-btn" id="cont-btn" onclick="continueSection()">Next Section →</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════ SCREEN 4: RESULTS ═══════════════ -->
+<div id="screen-results" class="screen">
+  <div class="res-wrap" id="res-wrap"></div>
+</div>
+
+<script>
+// ═══════════════════════════════════════════
+//  QUESTION BANK
+// ═══════════════════════════════════════════
+const QB = {
+  vocab: {
+    easy: [
+      {id:'ve1', q:'The word "abundant" most closely means:', opts:['Scarce and rare','Plentiful and rich','Ordinary and typical','Strange and surprising'], a:1, exp:'"Abundant" means existing in large quantities. E.g., "The region has abundant natural resources."'},
+      {id:'ve2', q:'Choose the word that best means "to make something better or improve it":', opts:['Enhance','Deteriorate','Neglect','Diminish'], a:0, exp:'"Enhance" means to intensify or improve in quality. "Deteriorate" is the opposite — to worsen.'},
+      {id:'ve3', q:'"Vivid" is best used to describe something that is:', opts:['Dull and lifeless','Bright, clear, and striking','Slow and quiet','Extremely heavy'], a:1, exp:'"Vivid" means intensely clear or strong. "A vivid description" paints a sharp mental picture.'},
+      {id:'ve4', q:'Which word means "completely tired out; drained of energy"?', opts:['Energetic','Exhausted','Eager','Excited'], a:1, exp:'"Exhausted" means completely used up or very tired. From Latin exhaurire — to drain out.'},
+    ],
+    medium: [
+      {id:'vm1', q:'"Ambiguous" is best defined as:', opts:['Clearly and precisely stated','Open to more than one interpretation','Extremely difficult to complete','Officially decided and final'], a:1, exp:'"Ambiguous" comes from Latin ambigere (to wander about). Ambiguous instructions admit multiple meanings.'},
+      {id:'vm2', q:'Something described as "unprecedented" has:', opts:['Happened many times before','Never occurred before','Been widely predicted in advance','Been officially prohibited'], a:1, exp:'"Unprecedented" = without precedent; something that has never happened or existed before.'},
+      {id:'vm3', q:'To "circumvent" a problem most accurately means to:', opts:['Solve it directly and methodically','Avoid or get around it cleverly','Make it significantly worse','Report it to an authority'], a:1, exp:'"Circumvent" from Latin circum (around) + venire (to come): to find a way around an obstacle.'},
+      {id:'vm4', q:'"Meticulous" attention to detail is best described as:', opts:['Careless and rushed','Extremely careful and precise','Creative and unconventional','Minimal and efficient'], a:1, exp:'"Meticulous" originally meant "fearful" in Latin, evolving to mean taking extreme care over fine details.'},
+    ],
+    hard: [
+      {id:'vh1', q:'A "perfunctory" review is one that is:', opts:['Remarkably thorough and complete','Done with minimal effort or care','Periodically and formally scheduled','Surprisingly and unexpectedly detailed'], a:1, exp:'"Perfunctory" describes something done as routine duty with minimal engagement — going through the motions.'},
+      {id:'vh2', q:'"Equivocal" evidence is best characterized as:', opts:['Definitive and irrefutable','Open to more than one interpretation','Gathered through unreliable means','Highly technical in nature'], a:1, exp:'"Equivocal" (Latin aequivocus) means capable of two interpretations — often implying deliberate vagueness.'},
+      {id:'vh3', q:'To "obviate" a difficulty means to:', opts:['Compound it further','Prevent it from arising','Investigate it systematically','Temporarily set it aside'], a:1, exp:'"Obviate" means to anticipate and eliminate a problem before it arises. "The patch obviates the need to reboot."'},
+      {id:'vh4', q:'"Pellucid" prose is best described as:', opts:['Highly technical and specialized','Abundantly clear and easily understood','Excessively verbose and ornate','Deliberately ambiguous'], a:1, exp:'"Pellucid" (Latin pellucidus) means translucently clear — perfect for prose that is absolutely lucid.'},
+    ],
+  },
+  grammar: {
+    easy: [
+      {id:'ge1', q:'Which sentence is grammatically correct?', opts:['She don\'t like coffee.','She doesn\'t like coffee.','She not like coffee.','She isn\'t like coffee.'], a:1, exp:'Third-person singular present uses "doesn\'t" (does + not). "Don\'t" is for I / you / we / they.'},
+      {id:'ge2', q:'Choose the correct word: "If I ___ you, I would apologize immediately."', opts:['am','was','were','be'], a:2, exp:'The second conditional uses the subjunctive "were" for all subjects. "Was" is informal; "were" is correct in formal English.'},
+      {id:'ge3', q:'Which sentence uses the present perfect correctly?', opts:['He has went to the store.','He have gone to the store.','He has gone to the store.','He gone to the store.'], a:2, exp:'Present perfect = has/have + past participle. "Gone" is the past participle of "go," not "went" (simple past).'},
+      {id:'ge4', q:'"Neither the students nor the teacher ___ ready." Choose the correct verb:', opts:['are','were','is','have been'], a:2, exp:'With "neither...nor," the verb agrees with the subject closest to it. "Teacher" is singular → "is."'},
+    ],
+    medium: [
+      {id:'gm1', q:'Identify the error in: "Despite of the rain, they continued playing."', opts:['"Despite of" — should be "Despite" alone or "In spite of"','"the rain" — incorrect article use','"they continued" — wrong subject-verb agreement','"playing" — should be the infinitive "to play"'], a:0, exp:'"Despite" is a preposition and never takes "of." "In spite of" has "of," but "despite" always stands alone.'},
+      {id:'gm2', q:'"The report, along with the supporting documents, ___ submitted." Fill in:', opts:['was','were','have been','are'], a:0, exp:'"Along with" is a parenthetical phrase that does not change the grammatical subject. "The report" is singular → "was."'},
+      {id:'gm3', q:'Which sentence correctly avoids a dangling modifier?', opts:['Having finished the exam, the room was immediately left.','Having finished the exam, the students left the room.','The exam having been finished, leaving the students.','Finished the exam, the room was left by students.'], a:1, exp:'A participial phrase must refer to the sentence\'s grammatical subject. Only B correctly establishes that the students finished the exam.'},
+      {id:'gm4', q:'"By the time she arrived at the venue, the meeting ___." Choose the correct tense:', opts:['already ended','has already ended','had already ended','was already ending'], a:2, exp:'Past perfect ("had ended") describes an action completed before another past action. "By the time she arrived" signals this sequence.'},
+    ],
+    hard: [
+      {id:'gh1', q:'Which sentence correctly uses the formal subjunctive mood?', opts:['I wish I was ten years younger.','I wish I were ten years younger.','I wish I am ten years younger.','I wish I have been younger.'], a:1, exp:'The formal subjunctive after "wish" requires "were" for all persons. "Was" is common in informal speech but avoided in formal writing.'},
+      {id:'gh2', q:'"Scarcely had she entered the room ___ the phone rang." Choose the correct connector:', opts:['when','than','then','that'], a:0, exp:'"Scarcely...when" is the correct paired conjunction for inverted structures. "No sooner...than" uses "than." Mixing them is a classic error.'},
+      {id:'gh3', q:'Which sentence uses the passive voice correctly?', opts:['The conclusion was drawing by the research team.','The conclusion drew by the research team.','The conclusion was drawn by the research team.','The conclusion has drew by the research team.'], a:2, exp:'Passive voice = to be + past participle. "Drawn" is the past participle of "draw." "Drawing" is a participle; "drew" is simple past.'},
+      {id:'gh4', q:'"It is essential that every participant ___ the form before entry." Fill in:', opts:['submits','submit','submitted','will submit'], a:1, exp:'After "it is essential/necessary/important that," English uses the mandative subjunctive: bare infinitive, regardless of subject.'},
+    ],
+  },
+  reading: {
+    easy: [
+      {id:'re1', p:'Exercise has numerous benefits for physical and mental health. Regular physical activity can help maintain a healthy weight, reduce the risk of chronic diseases, and improve mood. Studies show that even 30 minutes of moderate exercise per day can make a significant difference in overall wellbeing.', q:'According to the passage, which of the following is a stated benefit of regular exercise?', opts:['Eliminating the need for medical treatment','Maintaining healthy weight and improving mood','Guaranteeing immunity from chronic disease','Requiring only minimal time to achieve full results'], a:1, exp:'The passage explicitly states exercise helps "maintain a healthy weight" and "improve mood." Options A and C are extreme overgeneralizations not supported by the text.'},
+      {id:'re2', p:'Libraries have transformed from simple book repositories into community learning centers. Modern libraries offer digital resources, workshops, and meeting spaces in addition to traditional books and periodicals. This evolution reflects the changing information needs of communities.', q:'The passage\'s main point about modern libraries is that they:', opts:['Are becoming less relevant due to the internet','Focus almost exclusively on digital resources today','Have expanded beyond their traditional function','Should replace schools as primary learning centers'], a:2, exp:'The passage emphasizes "transformation" and expansion — libraries now offer more than books. Options A and D are not supported by the text.'},
+      {id:'re3', p:'Eating breakfast has been linked to improved concentration and academic performance in students. A nutritious morning meal provides the energy and nutrients needed to support cognitive function throughout the school day.', q:'The passage suggests that eating breakfast primarily benefits students by:', opts:['Removing the need for a midday meal','Improving their focus and academic results','Building stronger physical endurance','Preventing long-term weight gain'], a:1, exp:'The passage links breakfast to "improved concentration and academic performance" — a cognitive benefit, not physical endurance or meal replacement.'},
+      {id:'re4', p:'Social media platforms allow users to share information instantly with a global audience. While this enables rapid communication and connection, it also dramatically increases the speed at which misinformation can spread.', q:'The passage identifies which of the following as a significant drawback of social media?', opts:['The high cost of maintaining these platforms','Limited reach to global audiences','The rapid spread of false information','Too many competing voices on a single platform'], a:2, exp:'The passage explicitly contrasts rapid communication (benefit) with the speed at which misinformation spreads (drawback).'},
+    ],
+    medium: [
+      {id:'rm1', p:'Digital literacy has become a critical skill in contemporary society. Unlike traditional literacy, which focuses on reading and writing, digital literacy encompasses the ability to evaluate online information critically, understand data privacy, and navigate evolving technological platforms. Without these skills, individuals become increasingly vulnerable to manipulation.', q:'Digital literacy is presented as distinct from traditional literacy primarily because it:', opts:['Requires more years of formal education to acquire','Involves critically evaluating and navigating digital environments','Is less applicable to professional settings today','Applies only to careers in the technology sector'], a:1, exp:'The passage draws an explicit contrast: traditional literacy = reading/writing; digital literacy = evaluating online information, privacy, and navigation.'},
+      {id:'rm2', p:'Urban green spaces have been shown to reduce residents\' stress levels, lower urban temperatures, and improve air quality. However, as cities expand, these spaces are increasingly converted into commercial or residential developments, creating tension between economic growth and environmental health.', q:'The passage implies that urban development creates a challenge because:', opts:['Green spaces are prohibitively expensive to maintain','Residents rarely make use of existing parks','Economic pressures endanger spaces that provide environmental benefits','Cities cannot expand without completely eliminating all green areas'], a:2, exp:'The passage sets up a tension: economic development vs. green spaces with proven environmental value. Option D is too absolute and not stated in the text.'},
+      {id:'rm3', p:'The placebo effect demonstrates that patients\' beliefs about treatment can produce measurable physiological changes. In clinical trials, subjects who receive inactive treatments often report significant symptom improvement, suggesting that expectation alone can trigger real biological responses.', q:'The author\'s primary point about the placebo effect is that:', opts:['It proves that most medications are clinically unnecessary','Psychological expectation can generate genuine physical changes','Clinical trials are fundamentally unreliable measures of drug effectiveness','Doctors should routinely prescribe placebos to all patients'], a:1, exp:'The core point is that psychological expectation (belief) produces real physiological outcomes — the mind-body connection. Options A and C are not supported.'},
+      {id:'rm4', p:'Code-switching — alternating between two or more languages in conversation — is viewed by linguists not as a linguistic deficiency but as a sophisticated communication strategy. Bilingual speakers use it to convey nuance, establish solidarity, or adapt to different social contexts.', q:'According to the passage, linguists view code-switching as:', opts:['Evidence of incomplete language acquisition','A marker of cultural disorientation','A skilled form of social and linguistic adaptation','A barrier to clear and effective communication'], a:2, exp:'Linguists frame code-switching positively: it is "sophisticated" and serves communicative and social functions — explicitly not a deficit.'},
+    ],
+    hard: [
+      {id:'rh1', p:'The observer effect in quantum mechanics posits that measuring a subatomic particle fundamentally alters its state. This challenges classical notions of objective reality, suggesting that at its most foundational level, reality may not exist independently of observation. Philosophers of science remain divided over whether this implies a radical idealism or merely reflects the limitations of measurement instruments.', q:'The passage indicates that the observer effect primarily disturbs which assumption?', opts:['The mathematical consistency of quantum equations','The idea that reality exists independently of being observed','The reliability of particle physics experiments generally','The classical method of scientific classification'], a:1, exp:'The passage directly states the observer effect "challenges classical notions of objective reality" — i.e., the assumption of mind-independent reality.'},
+      {id:'rh2', p:'Institutional path dependence describes how early choices in the design of political or economic institutions create self-reinforcing mechanisms that make deviation increasingly costly over time. As more actors adapt their behavior to existing arrangements, the collective incentive to maintain those arrangements grows — even when the original rationale no longer applies.', q:'According to the passage, path dependence persists primarily because:', opts:['Early institutions are by definition optimally designed','Widespread adaptation by stakeholders raises the cost of change','Political actors intentionally block all institutional reform','Most social actors remain unaware of better alternatives'], a:1, exp:'The key mechanism is self-reinforcement through adaptation: more actors adapting → higher switching costs → persistence of the institution.'},
+      {id:'rh3', p:'The availability heuristic causes people to judge the probability of an event based on how readily examples come to mind. Because dramatic or emotionally vivid events receive disproportionate media coverage, people systematically overestimate the frequency of rare but salient events — such as plane crashes — while underestimating more common, less sensational risks.', q:'The author implies that the availability heuristic distorts risk perception specifically because:', opts:['People lack reliable access to accurate probability data','Media amplifies the cognitive salience of rare, dramatic events','Rare events are inherently more dangerous than frequent ones','People generally distrust official statistics on risk'], a:1, exp:'The causal chain is: dramatic events → disproportionate coverage → enhanced mental availability → probability overestimation. Media amplification is the key mechanism.'},
+      {id:'rh4', p:'Proponents of degrowth contend that perpetual GDP expansion is ecologically unsustainable and incompatible with planetary boundaries. Rather than pursuing growth and redistributing its benefits, degrowth theorists advocate restructuring economies around sufficiency, care work, and reduced resource throughput — even at the cost of contracting measurable output.', q:'The degrowth position, as described, most fundamentally challenges which assumption?', opts:['The taxation structures of industrialized nations','The premise that continuous economic expansion is both desirable and sustainable','The effectiveness of existing environmental protection regulations','The methodology behind standard GDP measurement'], a:1, exp:'Degrowth challenges the foundational premise of growth-oriented economics: that perpetual GDP expansion is both possible and good. Options A and C are not directly challenged.'},
+    ],
+  },
+  writing: {
+    easy: [
+      {id:'we1', q:'"The manager asked us that we should complete the report by Thursday." Which part is incorrect?', opts:['"asked us that we should" — should be "asked us to complete"','"complete the report"','"by Thursday"','No error — the sentence is correct'], a:0, exp:'"Ask" governs an infinitive, not a that-clause. Correct form: "asked us to complete." The "that + should" pattern is a common structural error.'},
+      {id:'we2', q:'"He is one of the students who attends class every day." Which part is incorrect?', opts:['"one of"','"the students who"','"attends class" — should be "attend class"','No error'], a:2, exp:'The relative clause "who attends" refers to "students" (plural) → the verb must be "attend." "One of the students who attend class" is correct.'},
+      {id:'we3', q:'Choose the grammatically and lexically correct sentence:', opts:['"Please advice me on this matter."','"Please advise me on this matter."','"Please giving me advice on this matter."','"Please to advise me about this."'], a:1, exp:'"Advise" is the verb; "advice" is the noun. "Please advise me" is correct. "Please advice me" is a classic homophone confusion error.'},
+      {id:'we4', q:'"The number of students who failed the exam are increasing." Which part is incorrect?', opts:['"The number of"','"students who failed"','"the exam"','"are increasing" — should be "is increasing"'], a:3, exp:'"The number" (singular subject) requires "is." Compare: "A number of students are failing" — here "a number" is informally treated as plural.'},
+    ],
+    medium: [
+      {id:'wm1', q:'"Despite working very hard, but she still failed the exam." What is the grammatical error?', opts:['"Despite" is not appropriate here','"working very hard" should be "she worked very hard"','"but" creates a redundant contrast after "Despite"','"still failed" should be "yet failed"'], a:2, exp:'"Despite" already expresses contrast, so "but" is redundant and ungrammatical. Use either "Despite working hard, she failed" OR "She worked hard, but she still failed."'},
+      {id:'wm2', q:'Which sentence contains a dangling modifier?', opts:['"Having finished the exam, the students left the room."','"Running through the park, the flowers were beautiful."','"Although exhausted, she continued with the project."','"After reading the proposal, I noticed several issues."'], a:1, exp:'In B, "Running through the park" must logically modify the subject — but "flowers" cannot run. The implied subject of the participle (a person) differs from the sentence subject.'},
+      {id:'wm3', q:'Select the most formally precise and stylistically correct sentence:', opts:['"We\'re gonna look at the data next week."','"We will be examining the data sometime next week."','"The data will be reviewed by the team on Wednesday."','"The team is going to look at it soon."'], a:2, exp:'C uses passive voice appropriately in a formal context, specifies a time reference ("Wednesday"), and avoids all colloquialisms ("gonna," "look at it," "sometime").'},
+      {id:'wm4', q:'Which sentence is correctly punctuated?', opts:['"However, the experimental results were inconclusive."','"However the results, were inconclusive."','"The results however, were inconclusive."','"The results, however were inconclusive."'], a:0, exp:'"However" as a conjunctive adverb at the start of a sentence requires a comma after it. Mid-sentence use requires commas on both sides: "The results, however, were inconclusive."'},
+    ],
+    hard: [
+      {id:'wh1', q:'"The committee has gave their final recommendation to the board." Which word is incorrect?', opts:['"has" — should be "have" for committee','"gave" — should be "given" (past participle)','"their" — should be "its"','"final recommendation" — should be "final recommendations"'], a:1, exp:'Present perfect = has/have + past participle. "Given" is the past participle of "give." "Gave" is simple past and cannot follow "has."'},
+      {id:'wh2', q:'Which sentence demonstrates correct and elegant parallel structure?', opts:['"The study aimed to identify, analyzing, and then report on findings."','"The study aimed to identify, analyze, and report on findings."','"The study aimed at identifying, to analyze, and reporting the findings."','"The study aimed to identify and the analyzing then reporting."'], a:1, exp:'Parallel structure requires consistent grammatical form. B correctly uses three bare infinitives: "to identify, analyze, and report" — the "to" is understood after the first verb.'},
+      {id:'wh3', q:'Which sentence correctly uses the mandative subjunctive in formal academic writing?', opts:['"The professor insists that the student submits the paper by Friday."','"The professor insists that the student submit the paper by Friday."','"The professor insists that the student submitted the paper by Friday."','"The professor insists that the student will submit the paper by Friday."'], a:1, exp:'The mandative subjunctive follows verbs of insistence/recommendation/requirement. The bare infinitive "submit" (not "submits") is used — a formal, grammatically distinct construction.'},
+      {id:'wh4', q:'"Between you and I, the entire campaign was a strategic failure." What is the grammatical error?', opts:['"Between" should be "Among" when referring to two parties','"I" should be "me" — pronouns after prepositions take the objective case','"was" should be "were" to reflect a subjunctive register','There is no error — "Between you and I" is standard formal English'], a:1, exp:'Prepositions govern the objective case. "Between you and me" is correct. "Between you and I" is a hypercorrection — incorrectly applying "I" out of misapplied formalism.'},
+    ],
+  },
+};
+
+// ═══════════════════════════════════════════
+//  RECOMMENDATIONS
+// ═══════════════════════════════════════════
+const RECS = {
+  vocab:{
+    beginner:{diag:'词汇量较为有限，建议从四级核心词汇开始系统积累，重点掌握高频词在不同语境下的用法。',steps:['每日背诵 20–30 个高频单词，优先参考《四级核心词汇》（约 4,000 词）','使用 Anki / Quizlet 进行 Spaced Repetition（间隔重复）训练','通过精读英语短文培养"根据上下文猜词"的 contextual guessing 能力','注意 connotation 差异：如 "house" vs. "home" 在语义上的情感色彩']},
+    elementary:{diag:'已掌握基础词汇，但在中高频学术词汇和多义词使用上仍需强化，尤其是 IELTS Academic Word List（AWL）范围内的词汇。',steps:['系统学习 Academic Word List（AWL），掌握 570 个学术核心词族','训练词根词缀分析能力，如 circum-（around）、-ify（to make）等','精读 The Economist / Scientific American 类文章，注重 collocation（词语搭配）','关注语域（register）差异：正式学术用词 vs. 口语用词的选择']},
+    intermediate:{diag:'词汇量已具备较好基础，建议向 TOEFL/IELTS 高频词及低频精确词汇延伸，尤其是学术写作中的高精度修辞性词语。',steps:['重点突破"近义混淆词"：如 equivocal / ambiguous / vague 的语义边界','阅读 The Atlantic / Nature News，积累高级学术语境用法','写作时主动替换低频词，避免词汇重复率（lexical repetition）过高','学习拉丁、希腊词根提升生词解码能力（如 pellucid ← Latin pellucidus）']},
+    advanced:{diag:'词汇水平出色，接近母语者学术语言能力。建议继续拓展特定学科词汇和文体差异敏感度。',steps:['研读 GRE 词汇表（如 Barron\'s 333 Hard Words），掌握最高精度词汇','分析优秀学术论文的用词逻辑，理解作者为何在特定语境中选择特定词语','使用 Corpus 工具（COCA / BNC）分析词频与搭配的真实分布','培养对"错误近似词"的 metalinguistic awareness（元语言敏感度）']},
+  },
+  grammar:{
+    beginner:{diag:'基础语法规则（时态、主谓一致、句子结构）掌握不稳定，建议系统梳理核心语法框架。',steps:['系统学习英语时态体系（12 种时态），重点掌握一般现在时 vs. 现在完成时的功能差异','熟悉主谓一致特殊情况：neither...nor、along with、集合名词（committee, data）等','推荐教材：Cambridge Grammar in Use（Raymond Murphy）初/中级册','每日做 10 道语法填空，建立错题本专门记录高频错误类型']},
+    elementary:{diag:'基础语法较为扎实，但在复杂从句、分词短语、虚拟语气（subjunctive mood）等高级结构上仍有盲点。',steps:['重点突破虚拟语气：第二条件句、wish 从句、mandative subjunctive 三种类型','练习分词短语的正确用法，避免 dangling modifier（悬垂分词）错误','系统学习倒装结构：Scarcely had…when / No sooner…than / Not only…but also','推荐资源：British Council Grammar 在线练习（免费，按语法点分类）']},
+    intermediate:{diag:'语法准确率良好，可开始关注语法的语体功能，即在不同写作场景中选择最恰当的句法结构。',steps:['研究学术英语中 passive voice 的功能性使用，学会判断主动/被动的选择逻辑','练习 complex noun phrases（复杂名词短语）的构建，提升写作信息密度','学习高级连接词的准确用法：nevertheless, notwithstanding, hitherto, insofar as 等','通过改写练习：将简单句扩展为含有嵌套从句的 complex/compound-complex 句']},
+    advanced:{diag:'语法能力出色，具备较高的句法灵活性。建议从"语法准确"升级到"语法优雅"。',steps:['研究 Stylistic Grammar：如何用句法选择（word order, sentence rhythm）强化语义重心','分析经典散文（Orwell, James Baldwin, Joan Didion）的句子构建策略','探索 X-bar theory 或生成语法基础，提升对英语句法的元认知能力','在写作中主动实验非标准但文体合理的结构（如 periodic sentence, anaphora）']},
+  },
+  reading:{
+    beginner:{diag:'阅读理解能力有限，对文章主旨和细节的把握不够准确，需从基础阅读技巧入手系统训练。',steps:['每日精读一篇 200–300 词短文，训练"首句归纳段落主旨"（topic sentence）的能力','学习区分三种核心题型：main idea、detail、inference 的解题策略','推荐读物：BBC Learning English / 21世纪英语报（适合 CET-4 水平）','建立阅读词汇本，专门记录导致理解失误的关键词及其上下文用法']},
+    elementary:{diag:'能把握文章大意，但在理解隐含意义、作者态度和复杂推理链条方面仍需提升。',steps:['练习 inference 题型：根据文字推断作者立场，注意 hedging language（模糊限制语）','学习分析文章的 rhetorical structure：argument, counterargument, concession, rebuttal','阅读 New York Times / The Guardian 国际版，训练真实语料理解能力','重点练习"代词指代还原"：理解文中每个 this / it / they / which 的具体所指']},
+    intermediate:{diag:'阅读理解较为扎实，能处理中等复杂度的学术和议论性文本。可向 TOEFL/IELTS 真题难度进阶。',steps:['精做 TOEFL/IELTS Official Practice Tests，分析每道错题的推理漏洞所在','学习"批判性阅读"技巧：识别 claim、evidence、warrant 及其逻辑漏洞','阅读跨学科材料（历史、哲学、自然科学），训练快速语境迁移能力','计时阅读练习：IELTS 60 分钟 3 篇 / TOEFL 36 分钟 2 篇（官方计时标准）']},
+    advanced:{diag:'阅读能力优秀，能准确处理高度复杂的学术文本并进行深层推断。建议向学术研究级阅读能力迈进。',steps:['阅读原版学术期刊入门文章（JSTOR / Google Scholar），熟悉学科写作惯例','练习 comparative reading（对比阅读）：分析同一议题两篇立场不同的文章','学习 rhetorical analysis 方法：分析作者如何通过语言选择（diction, syntax, tone）建构论述','研读 GMAT Critical Reasoning 材料，进一步强化逻辑论证分析能力']},
+  },
+  writing:{
+    beginner:{diag:'写作基础语法错误较多，包括词类混淆、动词搭配错误和标点用法不当，建议从句子层面打好基础。',steps:['专项练习 verb patterns：ask sb to do / suggest doing / insist that sb (should) do','学习主要词类的词形变化：advice（n.）vs. advise（v.）等高频混淆组','每日改错练习：找出并订正含常见语法错误的句子（推荐 Grammarly + 手动核查）','推荐教材：English Grammar in Use 初级部分 + 配套写作练习册']},
+    elementary:{diag:'句子层面的基础错误减少，但在段落组织、连接词使用和语域一致性（register consistency）上仍需系统训练。',steps:['重点学习连接词准确用法：however（句首+逗号），despite（无 of），although（不与 but 连用）','练习 parallel structure（平行结构）：to identify, analyze, and report（保持形式统一）','学习"句型多样性"：避免所有句子均为简单句，尝试 complex / compound-complex 句交替使用','每周写一篇 200 词短文，重点训练逻辑连贯性（coherence）和论点支撑（supporting evidence）']},
+    intermediate:{diag:'写作准确率较高，但在语体精准度（register precision）和高级句法多样性上仍有提升空间。',steps:['研究学术写作中"作者身份规避"策略：passive voice、非人称主语、hedging 用词（it is argued that...）','练习"句子精修"（sentence refinement）：将松散冗长的句子改写为紧凑精准的版本','系统学习强调结构：It is…that / What…is / Not only…but also / Cleft sentences','推荐资源：Academic Writing for Graduate Students（Swales & Feak）第三版']},
+    advanced:{diag:'写作能力出色，语法准确、语体得当。可进一步提升文体差异敏感度（register sensitivity）和修辞说服力。',steps:['学习 rhetorical mode 的精细化运用：叙述、分析、驳论、让步的结构逻辑与语言标记','研读 The Elements of Style（Strunk & White）和 Style: Toward Clarity and Grace（Joseph Williams）','分析 TOEFL/IELTS 满分范文的句法策略，反向工程高分作文的结构模式','通过专业平台（iTalki, Preply, r/WriteStreakEN）获取母语者对完整作文的专业批改']},
+  },
+};
+
+const EXAM_TIPS = {
+  toefl:{name:'TOEFL iBT',tip:'TOEFL iBT 注重综合语言运用能力，阅读词汇难度高（目标 9,000+ 词汇量），写作需同时掌握 Integrated（综合）和 Independent（独立）两种题型。备考周期建议 3–6 个月，每天保证 2 小时高质量语言输入。目标分数 100+ 需要全科均衡发展，其中词汇量和写作组织能力是最关键的突破口。推荐官方资源：TOEFL Official Guide（第 5 版）+ Khan Academy TOEFL Prep（免费）。'},
+  ielts:{name:'IELTS Academic',tip:'IELTS Academic 更强调真实语境下的语言运用，阅读文章来自学术期刊和报告（无中文注释）。写作 Task 1 需要描述图表数据趋势，Task 2 为议论文，评分标准明确包含 Lexical Resource（词汇多样性）和 Grammatical Range（语法范围）。建议从 Cambridge IELTS Official Test Books（剑桥真题 1–18）入手，保证 30+ 篇阅读真题量，写作每篇请专业老师批改一次。'},
+  cet6:{name:'CET-6 六级',tip:'CET-6 词汇量要求约 6,000–8,000 词，听力占 35%、阅读 35%、写作 15%、翻译 15%。建议重点训练"长难句分析"（阅读）和"汉译英"（翻译）两个高难度模块。翻译部分通常考察中国文化特色词汇（如传统节日、中医概念），需专项积累。可借助《星火英语 CET-6 词汇手册》和历年真题（2015–2024）进行系统备考，每周至少完成一套完整模拟题。'},
+  cet4:{name:'CET-4 四级',tip:'CET-4 是大学英语的核心基准测试，词汇量要求约 4,500–5,500 词。写作通常为议论文或说明文，评分重视语法准确性和段落结构。建议使用《星火英语 CET-4 词汇》完成词汇积累，搭配《巅峰训练 CET-4 真题集》（3–5 年真题）进行专项训练。听力部分是许多学生的丢分重灾区——建议每天精听 20 分钟 VOA Learning English 或 NPR Short Wave，并跟读练习语音节奏。'},
+};
+
+// ═══════════════════════════════════════════
+//  STATE
+// ═══════════════════════════════════════════
+const SECS    = ['vocab','grammar','reading','writing'];
+const SEC_NAME = {vocab:'Vocabulary',grammar:'Grammar',reading:'Reading',writing:'Writing'};
+const SEC_ICON = {vocab:'📖',grammar:'✏️',reading:'🔍',writing:'📝'};
+const DL = ['easy','medium','hard'];
+const DL_LBL = ['Easy','Medium','Hard'];
+const LVL_MAP = ['beginner','elementary','intermediate','advanced'];
+
+let S = {
+  exam:null, secIdx:0, diff:1, qInSec:0,
+  correct:[0,0,0,0], wScore:[0,0,0,0], wMax:[0,0,0,0],
+  used:new Set(), curQ:null, answered:false
+};
+
+function pct(i){ return S.wMax[i]>0 ? Math.round(S.wScore[i]/S.wMax[i]*100) : 0; }
+function lvl(p){ return p<40?0:p<65?1:p<85?2:3; }
+
+// ═══════════════════════════════════════════
+//  HELPERS
+// ═══════════════════════════════════════════
+function show(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+function selectExam(btn){
+  document.querySelectorAll('.exam-btn').forEach(b=>b.classList.remove('selected'));
+  btn.classList.add('selected');
+  S.exam = btn.dataset.exam;
+  document.getElementById('start-btn').disabled = false;
+}
+
+function pickQ(sec, diff){
+  const pool = QB[sec][DL[diff]].filter(q=>!S.used.has(q.id));
+  if(pool.length===0){
+    const alt = diff>0?diff-1:diff<2?diff+1:diff;
+    const alt2 = QB[sec][DL[alt]].filter(q=>!S.used.has(q.id));
+    return alt2.length ? alt2[Math.floor(Math.random()*alt2.length)] : null;
+  }
+  return pool[Math.floor(Math.random()*pool.length)];
+}
+
+function updatePips(){
+  for(let i=0;i<4;i++){
+    const p = document.getElementById('pip-'+i);
+    p.className = 'pip';
+    if(i<S.secIdx) p.classList.add('done');
+    else if(i===S.secIdx) p.classList.add('active');
+  }
+}
+
+// ═══════════════════════════════════════════
+//  TEST FLOW
+// ═══════════════════════════════════════════
+function startTest(){
+  S = {exam:S.exam, secIdx:0, diff:1, qInSec:0,
+       correct:[0,0,0,0], wScore:[0,0,0,0], wMax:[0,0,0,0],
+       used:new Set(), curQ:null, answered:false};
+  show('screen-test');
+  updatePips();
+  renderQ();
+}
+
+function renderQ(){
+  const key = SECS[S.secIdx];
+  const q = pickQ(key, S.diff);
+  if(!q){ endSection(); return; }
+  S.curQ = q;
+  S.used.add(q.id);
+  S.answered = false;
+
+  document.getElementById('q-counter').textContent =
+    SEC_NAME[key]+' · '+(S.qInSec+1)+' / 5';
+
+  const dots = [0,1,2].map(i=>
+    '<div class="ddot'+(i<=S.diff?' on':'')+'"></div>').join('');
+
+  const passage = q.p
+    ? '<div class="passage">'+q.p+'</div>' : '';
+
+  const letters = ['A','B','C','D'];
+  const opts = q.opts.map((o,i)=>
+    '<button class="opt" id="o'+i+'" onclick="pick('+i+')">'
+    +'<span class="opt-letter">'+letters[i]+'</span>'
+    +'<span class="opt-text">'+o+'</span>'
+    +'</button>').join('');
+
+  const isLast = S.qInSec === 4;
+
+  document.getElementById('q-card').innerHTML =
+    '<div class="q-badge">'
+    +SEC_ICON[key]+' '+SEC_NAME[key]
+    +' <span style="opacity:.4;margin:0 2px">·</span>'
+    +'<div class="diff-dots">'+dots+'</div>'
+    +' <span style="font-size:.63rem;opacity:.65">'+DL_LBL[S.diff]+'</span>'
+    +'</div>'
+    +passage
+    +'<div class="q-text">'+q.q+'</div>'
+    +'<div class="opts">'+opts+'</div>'
+    +'<div class="feedback" id="fb"></div>'
+    +'<button class="next-btn" id="nx" onclick="nextQ()">'
+    +(isLast?'Complete Section →':'Next Question →')
+    +'</button>';
+}
+
+function pick(idx){
+  if(S.answered) return;
+  S.answered = true;
+  const q = S.curQ;
+  const ok = idx===q.a;
+  const dp = S.diff+1;
+  S.wMax[S.secIdx] += dp;
+  if(ok){ S.wScore[S.secIdx]+=dp; S.correct[S.secIdx]++; }
+  S.diff = ok ? Math.min(2,S.diff+1) : Math.max(0,S.diff-1);
+
+  document.querySelectorAll('.opt').forEach(b=>b.disabled=true);
+  document.getElementById('o'+idx).classList.add(ok?'correct':'wrong');
+  if(!ok) document.getElementById('o'+q.a).classList.add('correct');
+
+  const fb = document.getElementById('fb');
+  fb.textContent = q.exp;
+  fb.className = 'feedback '+(ok?'ok':'no');
+  document.getElementById('nx').style.display = 'block';
+}
+
+function nextQ(){
+  S.qInSec++;
+  if(S.qInSec>=5) endSection();
+  else renderQ();
+}
+
+function endSection(){
+  const i = S.secIdx;
+  const key = SECS[i];
+  const p = pct(i);
+  const msgs = [
+    '保持住，每道题都是积累。Every step counts.',
+    '不错的开始！继续保持这种节奏。',
+    '相当扎实！你已经进入高手区间了。',
+    '出色！这个水平已经相当接近母语者了。'
+  ];
+  document.getElementById('sec-icon').textContent = SEC_ICON[key];
+  document.getElementById('sec-title').textContent = SEC_NAME[key]+' Complete';
+  document.getElementById('sec-sub').textContent =
+    S.correct[i]+' / 5 correct · Weighted: '+p+'%';
+  document.getElementById('sec-score').textContent = p+'%';
+  document.getElementById('sec-msg').textContent = msgs[lvl(p)];
+  const isLast = i===3;
+  document.getElementById('cont-btn').textContent =
+    isLast ? 'View My Results →' : 'Next Section →';
+  show('screen-section-end');
+}
+
+function continueSection(){
+  S.secIdx++;
+  if(S.secIdx>=4){ showResults(); return; }
+  S.diff=1; S.qInSec=0;
+  show('screen-test');
+  updatePips();
+  renderQ();
+}
+
+// ═══════════════════════════════════════════
+//  RESULTS
+// ═══════════════════════════════════════════
+const LVL_DISP = [
+  {en:'Beginner',cn:'入门级',desc:'相当于 CET-4 备考初期水平，建议以词汇积累和基础语法为核心学习目标。',c:'#8B1F1F',bg:'#FBE8E8'},
+  {en:'Elementary',cn:'初级',desc:'达到 CET-4 / CET-6 准备阶段水平。语言基础已初步建立，需强化综合应用能力。',c:'#7A5100',bg:'#FFF3D6'},
+  {en:'Intermediate',cn:'中级',desc:'相当于 IELTS 6.0–6.5 / TOEFL 75–85 水平。综合能力良好，具备冲刺高分区间的潜力。',c:'#2A6348',bg:'#E8F5EE'},
+  {en:'Advanced',cn:'高级',desc:'相当于 IELTS 7.0+ / TOEFL 100+ 水平。具备出色的英语综合能力，可向顶级院校学术申请迈进。',c:'#3A2E8A',bg:'#EAE8FF'},
+];
+
+function showResults(){
+  const ps = SECS.map((_,i)=>pct(i));
+  const overall = Math.round(ps.reduce((a,b)=>a+b,0)/4);
+  const ol = lvl(overall);
+  const ld = LVL_DISP[ol];
+  const et = EXAM_TIPS[S.exam]||EXAM_TIPS.ielts;
+
+  // Circumference for r=42
+  const R=42, C=2*Math.PI*R;
+
+  const secCards = SECS.map((key,i)=>{
+    const p=ps[i], l=lvl(p), d=LVL_DISP[l];
+    return '<div class="src">'
+      +'<div class="src-top">'
+        +'<div class="src-left">'
+          +'<div class="src-ico">'+SEC_ICON[key]+'</div>'
+          +'<div>'
+            +'<div class="src-name">'+SEC_NAME[key]+'</div>'
+            +'<div class="src-sub">'+S.correct[i]+' / 5 correct</div>'
+          +'</div>'
+        +'</div>'
+        +'<div class="src-pct">'+p+'%</div>'
+      +'</div>'
+      +'<div class="bar-bg"><div class="bar-fill" id="bar'+i+'" style="width:0%"></div></div>'
+      +'<span class="lvl-tag lvl-'+LVL_MAP[l]+'" style="background:'+d.bg+';color:'+d.c+'">'+d.en+' · '+d.cn+'</span>'
+    +'</div>';
+  }).join('');
+
+  const recCards = SECS.map((key,i)=>{
+    const p=ps[i], lv=LVL_MAP[lvl(p)], rec=RECS[key][lv], d=LVL_DISP[lvl(p)];
+    const steps = rec.steps.map(s=>'<li class="rec-step">'+s+'</li>').join('');
+    return '<div class="rec-card">'
+      +'<div class="rec-card-top">'
+        +'<span style="font-size:.95rem">'+SEC_ICON[key]+'</span>'
+        +'<span class="rec-card-name">'+SEC_NAME[key]+'</span>'
+        +'<span class="rec-chip" style="background:'+d.bg+';color:'+d.c+'">'+d.en+'</span>'
+      +'</div>'
+      +'<p class="rec-diag">'+rec.diag+'</p>'
+      +'<ul class="rec-steps">'+steps+'</ul>'
+    +'</div>';
+  }).join('');
+
+  document.getElementById('res-wrap').innerHTML =
+    '<div class="res-hdr">'
+      +'<h1>Assessment<br>Complete</h1>'
+      +'<p>自适应能力诊断报告 · '+new Date().toLocaleDateString('zh-CN')+'</p>'
+    +'</div>'
+
+    +'<div class="overall-card">'
+      +'<div class="ov-left">'
+        +'<h2>OVERALL PROFICIENCY</h2>'
+        +'<div class="ov-level">'+ld.en+'<br><span>'+ld.cn+'</span></div>'
+        +'<p class="ov-desc">'+ld.desc+'</p>'
+      +'</div>'
+      +'<div class="ring-wrap">'
+        +'<svg viewBox="0 0 100 100" width="96" height="96">'
+          +'<circle fill="none" stroke="rgba(255,255,255,.15)" stroke-width="6" cx="50" cy="50" r="'+R+'"/>'
+          +'<circle id="svgc" fill="none" stroke="#F0C060" stroke-width="6" stroke-linecap="round"'
+            +' cx="50" cy="50" r="'+R+'"'
+            +' stroke-dasharray="'+C+'"'
+            +' stroke-dashoffset="'+C+'"'
+            +' style="transform:rotate(-90deg);transform-origin:50% 50%;transition:stroke-dashoffset 1.2s cubic-bezier(.4,0,.2,1)"/>'
+        +'</svg>'
+        +'<div class="ring-text">'
+          +'<div class="score-ring-num" id="snum">0</div>'
+          +'<div class="score-ring-pct">% overall</div>'
+        +'</div>'
+      +'</div>'
+    +'</div>'
+
+    +'<div class="secs-grid">'+secCards+'</div>'
+
+    +'<div class="rec-section">'
+      +'<div class="rec-hdr">学习建议 · Learning Path</div>'
+      +recCards
+      +'<div class="exam-card">'
+        +'<div class="exam-card-title">🎯 '+et.name+' 备考策略</div>'
+        +'<p class="exam-card-text">'+et.tip+'</p>'
+      +'</div>'
+    +'</div>'
+
+    +'<button class="retake-btn" onclick="retake()">← 重新测试</button>'
+    +'<div style="height:2rem"></div>';
+
+  show('screen-results');
+
+  // Animate after DOM settles
+  setTimeout(()=>{
+    // Score bars
+    ps.forEach((_,i)=>{
+      document.getElementById('bar'+i).style.width = ps[i]+'%';
+    });
+    // Ring
+    const c = document.getElementById('svgc');
+    if(c) c.setAttribute('stroke-dashoffset', String(C*(1-overall/100)));
+    // Counter
+    let n=0; const step=Math.max(1,Math.ceil(overall/50));
+    const t = setInterval(()=>{
+      n=Math.min(n+step,overall);
+      document.getElementById('snum').textContent=n;
+      if(n>=overall) clearInterval(t);
+    },28);
+  },180);
+}
+
+function retake(){
+  S.exam=null;
+  document.querySelectorAll('.exam-btn').forEach(b=>b.classList.remove('selected'));
+  document.getElementById('start-btn').disabled=true;
+  show('screen-intro');
+}
+</script>
+</body>
+</html>
