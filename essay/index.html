@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LEXIS · Essay Writing Grader</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Sora:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#F5EFE6;--card:#FFFDF9;--ink:#1C1810;--ink-mid:#4A4035;--ink-muted:#8A7F72;
+  --accent:#B85C00;--accent-light:#FFF3E8;--accent-dark:#8A4400;
+  --border:#E0D6C8;--border-light:#EDE8E0;
+  --success:#2A6348;--success-light:#E8F5EE;
+  --error:#8B1F1F;--error-light:#FBE8E8;
+  --shadow:0 2px 12px rgba(28,24,16,.08);--shadow-lg:0 8px 32px rgba(28,24,16,.14);--r:12px
+}
+html{font-size:16px}
+body{font-family:'Sora',sans-serif;background:var(--bg);color:var(--ink);min-height:100vh;line-height:1.6}
+h1,h2,h3{font-family:'Cormorant Garamond',Georgia,serif;line-height:1.2}
+.screen{display:none;min-height:100vh}
+.screen.active{display:flex;flex-direction:column}
+@keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+.screen.active>*{animation:fadeUp .3s ease forwards}
+
+/* INTRO */
+#screen-intro{align-items:center;justify-content:center;padding:2rem}
+.intro-wrap{max-width:580px;width:100%}
+.brand-mark{font-family:'Cormorant Garamond',serif;font-size:4.5rem;font-weight:700;letter-spacing:.14em;color:var(--ink);line-height:1}
+.brand-mark em{color:var(--accent);font-style:normal}
+.brand-sub{font-size:.7rem;font-weight:500;letter-spacing:.22em;text-transform:uppercase;color:var(--ink-muted);margin:.35rem 0 1.6rem}
+.divider{width:40px;height:2px;background:var(--accent);margin-bottom:1.6rem}
+.intro-body{font-size:.88rem;color:var(--ink-mid);line-height:1.85;margin-bottom:1.8rem}
+.field-lbl{font-size:.67rem;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-muted);margin-bottom:.6rem}
+.exam-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:.45rem;margin-bottom:.9rem}
+.exam-btn{padding:.7rem .3rem;border:1.5px solid var(--border);background:var(--card);border-radius:var(--r);cursor:pointer;transition:all .2s;text-align:center}
+.exam-btn .en{font-family:'Cormorant Garamond',serif;font-size:1.1rem;font-weight:600;display:block;color:var(--ink)}
+.exam-btn .cn{font-size:.58rem;color:var(--ink-muted)}
+.exam-btn:hover,.exam-btn.sel{border-color:var(--accent);background:var(--accent-light)}
+.exam-btn.sel .en{color:var(--accent-dark)}
+.prompt-preview{background:var(--card);border:1px solid var(--border);border-left:3px solid var(--accent);border-radius:0 var(--r) var(--r) 0;padding:1rem 1.2rem;margin-bottom:1.4rem;font-size:.85rem;line-height:1.75;color:var(--ink-mid);display:none}
+.prompt-preview.visible{display:block}
+.prompt-target{font-size:.72rem;color:var(--ink-muted);margin-top:.45rem;font-style:italic}
+.start-btn{width:100%;padding:.95rem 2rem;background:var(--ink);color:#F5EFE6;border:none;border-radius:var(--r);font-family:'Sora',sans-serif;font-size:.88rem;font-weight:500;letter-spacing:.07em;cursor:pointer;transition:all .25s}
+.start-btn:hover{background:var(--accent);transform:translateY(-2px);box-shadow:var(--shadow)}
+.start-btn:disabled{opacity:.4;cursor:not-allowed;transform:none;box-shadow:none}
+.note{font-size:.7rem;color:var(--ink-muted);text-align:center;margin-top:.8rem}
+
+/* WRITING */
+#screen-write{flex-direction:column}
+.w-hdr{padding:1rem 2rem;background:var(--card);border-bottom:1px solid var(--border-light);display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:10}
+.w-hdr-brand{font-family:'Cormorant Garamond',serif;font-size:1.25rem;font-weight:600;letter-spacing:.1em}
+.w-hdr-brand em{color:var(--accent);font-style:normal}
+.timer{font-family:'Cormorant Garamond',serif;font-size:2rem;font-weight:600;letter-spacing:.05em;color:var(--ink-mid);transition:color .3s}
+.timer.urgent{color:var(--error)}
+.wc-display{font-size:.78rem;color:var(--ink-muted)}
+.w-body{flex:1;display:flex;justify-content:center;padding:2rem 1.5rem 3rem}
+.w-wrap{max-width:680px;width:100%}
+.prompt-box{background:var(--card);border:1px solid var(--border);border-left:3px solid var(--accent);border-radius:0 var(--r) var(--r) 0;padding:1.1rem 1.4rem;margin-bottom:1.2rem}
+.prompt-lbl{font-size:.63rem;font-weight:600;letter-spacing:.15em;text-transform:uppercase;color:var(--accent-dark);margin-bottom:.4rem}
+.prompt-text{font-family:'Cormorant Garamond',serif;font-size:1.15rem;line-height:1.6;color:var(--ink)}
+.prompt-tgt{font-size:.73rem;color:var(--ink-muted);margin-top:.4rem}
+#essay{width:100%;min-height:260px;padding:1rem 1.2rem;border:1.5px solid var(--border);border-radius:var(--r);background:var(--card);font-family:'Sora',sans-serif;font-size:.9rem;line-height:1.8;color:var(--ink);resize:vertical;transition:border-color .2s;margin-bottom:1rem}
+#essay:focus{outline:none;border-color:var(--accent)}
+.submit-btn{padding:.9rem 2.2rem;background:var(--ink);color:#F5EFE6;border:none;border-radius:var(--r);font-family:'Sora',sans-serif;font-size:.88rem;font-weight:500;cursor:pointer;transition:all .2s}
+.submit-btn:hover{background:var(--accent);transform:translateY(-1px)}
+
+/* EVAL */
+#screen-eval{padding:0;align-items:stretch}
+.eval-scroll{overflow-y:auto;padding:2.5rem 1.5rem 4rem;display:flex;justify-content:center}
+.eval-wrap{max-width:680px;width:100%}
+.eval-hdr{margin-bottom:1.8rem}
+.eval-hdr h1{font-size:2.6rem;font-weight:600;line-height:1.05;margin-bottom:.2rem}
+.eval-hdr p{font-size:.8rem;color:var(--ink-muted)}
+.score-card{background:var(--ink);border-radius:20px;padding:2rem 2.4rem;color:#F5EFE6;margin-bottom:1.6rem}
+.score-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:1.4rem}
+.score-num{font-family:'Cormorant Garamond',serif;font-size:5rem;font-weight:700;color:#F0C060;line-height:1}
+.score-right{text-align:right}
+.score-grade{font-family:'Cormorant Garamond',serif;font-size:1.8rem;font-weight:600;line-height:1.1;margin-bottom:.3rem}
+.score-grade-sub{font-size:.72rem;opacity:.55;letter-spacing:.08em}
+.criteria-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:.55rem}
+.crit{background:rgba(255,255,255,.07);border-radius:8px;padding:.65rem .9rem}
+.crit-label{font-size:.62rem;opacity:.55;letter-spacing:.08em;text-transform:uppercase;margin-bottom:.2rem}
+.crit-row{display:flex;align-items:center;justify-content:space-between;gap:.5rem}
+.crit-val{font-size:.95rem;font-weight:600}
+.crit-bar-bg{flex:1;height:3px;background:rgba(255,255,255,.15);border-radius:2px;overflow:hidden}
+.crit-bar-fill{height:100%;border-radius:2px;background:#F0C060;transition:width .8s ease .2s}
+.fb-section{margin-bottom:1.4rem}
+.fb-title{font-family:'Cormorant Garamond',serif;font-size:1.25rem;font-weight:600;color:var(--ink);margin-bottom:.6rem}
+.fb-box{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:1.1rem 1.3rem;font-size:.875rem;line-height:1.85;color:var(--ink-mid);max-height:300px;overflow-y:auto}
+.fb-box.sample{background:var(--success-light);border-color:#A8D5BC}
+mark.mh{background:#FDEABC;color:#5A3800;border-radius:3px;padding:0 2px}
+.marker-note{font-size:.75rem;color:var(--ink-muted);margin:.6rem 0 1.2rem;padding:.65rem 1rem;background:var(--card);border:1px solid var(--border-light);border-radius:8px;line-height:1.6}
+.tips-wrap{display:grid;gap:.8rem;margin-bottom:1.6rem}
+.tip-card{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:1rem 1.2rem;display:flex;gap:.8rem;align-items:flex-start}
+.tip-icon{font-size:1.1rem;flex-shrink:0;margin-top:1px}
+.tip-text{font-size:.82rem;color:var(--ink-mid);line-height:1.6}
+.tip-text strong{color:var(--ink);font-weight:600}
+.again-btn{padding:.85rem 2rem;background:var(--ink);color:#F5EFE6;border:none;border-radius:var(--r);font-family:'Sora',sans-serif;font-size:.85rem;font-weight:500;cursor:pointer;transition:all .2s;margin-right:.7rem}
+.again-btn:hover{background:var(--accent);transform:translateY(-1px)}
+.change-btn{padding:.85rem 1.6rem;border:1.5px solid var(--border);background:transparent;color:var(--ink);border-radius:var(--r);font-family:'Sora',sans-serif;font-size:.85rem;font-weight:500;cursor:pointer;transition:all .2s}
+.change-btn:hover{border-color:var(--accent);color:var(--accent)}
+@media(max-width:560px){
+  .exam-grid{grid-template-columns:repeat(3,1fr)}
+  .brand-mark{font-size:3.5rem}
+  .criteria-grid{grid-template-columns:1fr}
+  .score-top{flex-direction:column;gap:.8rem}
+  .score-right{text-align:left}
+  .w-body{padding:1.5rem 1rem 2.5rem}
+  .w-hdr{padding:.8rem 1rem}
+}
+</style>
+</head>
+<body>
+
+<div id="screen-intro" class="screen active">
+  <div style="flex:1;display:flex;align-items:center;justify-content:center;padding:2rem">
+    <div class="intro-wrap">
+      <div class="brand-mark">L<em>E</em>XIS</div>
+      <div class="brand-sub">Essay Writing Grader · Automatic Scoring Lab</div>
+      <div class="divider"></div>
+      <p class="intro-body">
+        Select your target exam, read the prompt, then write your essay in <strong>10 minutes</strong>.
+        The system automatically scores your response on four dimensions:
+        <strong>word count, sentence variety, lexical diversity,</strong> and <strong>discourse marker usage</strong>.
+        A sample response is shown afterward for self-reflection.
+      </p>
+      <div class="field-lbl">Select Target Exam</div>
+      <div class="exam-grid">
+        <button class="exam-btn" data-exam="toefl" onclick="selectExam(this)"><span class="en">TOEFL</span><span class="cn">iBT 托福</span></button>
+        <button class="exam-btn" data-exam="ielts" onclick="selectExam(this)"><span class="en">IELTS</span><span class="cn">雅思</span></button>
+        <button class="exam-btn" data-exam="sat" onclick="selectExam(this)"><span class="en">SAT</span><span class="cn">学术测试</span></button>
+        <button class="exam-btn" data-exam="cet6" onclick="selectExam(this)"><span class="en">CET-6</span><span class="cn">六级</span></button>
+        <button class="exam-btn" data-exam="cet4" onclick="selectExam(this)"><span class="en">CET-4</span><span class="cn">四级</span></button>
+      </div>
+      <div class="prompt-preview" id="prompt-preview">
+        <div class="prompt-lbl">Essay Prompt</div>
+        <div id="preview-text"></div>
+        <div class="prompt-target" id="preview-target"></div>
+      </div>
+      <button class="start-btn" id="start-btn" onclick="startWrite()" disabled>Start Writing &nbsp;→</button>
+      <p class="note">All data processed locally in your browser — nothing is uploaded or stored.</p>
+    </div>
+  </div>
+</div>
+
+<div id="screen-write" class="screen">
+  <header class="w-hdr">
+    <div class="w-hdr-brand">L<em>E</em>XIS <span style="font-size:.72rem;font-weight:400;opacity:.5;letter-spacing:.12em">ESSAY</span></div>
+    <div class="timer" id="timer">10:00</div>
+    <div class="wc-display" id="wc-display">0 words</div>
+  </header>
+  <div class="w-body">
+    <div class="w-wrap">
+      <div class="prompt-box">
+        <div class="prompt-lbl">Essay Prompt</div>
+        <div class="prompt-text" id="write-prompt"></div>
+        <div class="prompt-tgt" id="write-target"></div>
+      </div>
+      <textarea id="essay" placeholder="Begin writing your response here…" oninput="updateWC()"></textarea>
+      <button class="submit-btn" onclick="submitEssay()">Submit Essay →</button>
+    </div>
+  </div>
+</div>
+
+<div id="screen-eval" class="screen">
+  <div class="eval-scroll">
+    <div class="eval-wrap">
+      <div class="eval-hdr"><h1>Your Results</h1><p id="eval-meta"></p></div>
+      <div class="score-card">
+        <div class="score-top">
+          <div class="score-num" id="score-num">—</div>
+          <div class="score-right">
+            <div class="score-grade" id="score-grade">—</div>
+            <div class="score-grade-sub">Automatic Score / 100</div>
+          </div>
+        </div>
+        <div class="criteria-grid" id="crit-grid"></div>
+      </div>
+      <div class="tips-wrap" id="tips-wrap"></div>
+      <div class="fb-section">
+        <div class="fb-title">Your Essay</div>
+        <div class="fb-box" id="student-essay"></div>
+      </div>
+      <div class="fb-section">
+        <div class="fb-title">Sample Response</div>
+        <div class="marker-note">Discourse markers are <mark class="mh">highlighted</mark> in both texts — compare your use of linking language and essay structure.</div>
+        <div class="fb-box sample" id="sample-essay"></div>
+      </div>
+      <div style="margin-top:1.8rem">
+        <button class="again-btn" onclick="tryAgain()">Try Again →</button>
+        <button class="change-btn" onclick="changeExam()">← Change Exam</button>
+      </div>
+      <div style="height:2rem"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+const PROMPTS = {
+  toefl:{text:'Some people believe that the benefits of globalization outweigh its drawbacks, while others argue the opposite. Write an argumentative essay presenting your position with clear reasoning and specific examples to support your view.',target:'Target: 250–300 words · 10 minutes'},
+  ielts:{text:'Some people believe that the benefits of globalization outweigh its drawbacks, while others argue the opposite. Write an argumentative essay presenting your position with clear reasoning and specific examples to support your view.',target:'Target: 250–300 words · 10 minutes'},
+  sat:{text:'Some people believe that the benefits of globalization outweigh its drawbacks, while others argue the opposite. Write an argumentative essay presenting your position with clear reasoning and specific examples to support your view.',target:'Target: 200–250 words · 10 minutes'},
+  cet6:{text:'Campus life today is heavily influenced by digital technology. Write a short essay discussing the benefits and drawbacks of this influence on students\' academic and social development.',target:'Target: ≤ 150 words · 10 minutes'},
+  cet4:{text:'Do you prefer studying alone or studying in a group? State your preference and give two or three reasons to support your answer.',target:'Target: ≤ 150 words · 10 minutes'},
+};
+
+const SAMPLES = {
+  toefl:`Globalization has reshaped every dimension of modern life, and I firmly believe that, on balance, its benefits outweigh its costs.\n\nFirst, globalization has dramatically expanded economic opportunity. By connecting producers to global markets, it has lifted hundreds of millions out of poverty in emerging economies. Countries such as South Korea and Vietnam transformed from agricultural societies to industrial powers within a generation — a change unthinkable without open trade.\n\nMoreover, the free flow of ideas across borders has accelerated scientific progress. International research collaborations produced the mRNA vaccine technology that proved critical during the COVID-19 pandemic. Cultural exchange has enriched literature, cuisine, and music across every continent.\n\nHowever, critics rightly point to downsides: rising inequality within nations and the erosion of local industries. Nevertheless, these are problems to manage within a globalized framework, not reasons to abandon it entirely. The solution is better governance — stronger safety nets and targeted retraining programs.\n\nIn conclusion, globalization's contributions to prosperity, knowledge, and human connection make it a net positive — provided we address its distributional consequences with care.`,
+  ielts:`Globalization has reshaped every dimension of modern life, and on balance its benefits outweigh its costs.\n\nFirst, globalization has expanded economic opportunity on an unprecedented scale. By connecting producers to global markets, it lifted hundreds of millions from poverty in emerging economies. Countries like South Korea transformed from agricultural societies to industrial powerhouses within a single generation.\n\nFurthermore, the free flow of ideas across borders accelerates scientific and cultural innovation. International research collaborations produced the mRNA vaccines that became critical during the COVID-19 pandemic.\n\nOn the other hand, critics point to rising inequality within nations and the erosion of local industries. These concerns are valid and demand policy responses: stronger safety nets, retraining programs, and cultural preservation efforts.\n\nNevertheless, these are challenges to address within a globalized world, not reasons to reverse it. In conclusion, globalization's contributions to prosperity and knowledge make it a net positive — provided we govern it wisely.`,
+  sat:`Globalization has reshaped every dimension of modern life, and on balance its benefits outweigh its costs.\n\nFirst, globalization has expanded economic opportunity on an unprecedented scale. By connecting producers to global markets, it lifted hundreds of millions from poverty in emerging economies. Countries like South Korea transformed from agricultural societies to industrial powerhouses within a single generation — a change unthinkable without open trade.\n\nMoreover, the free flow of ideas across borders accelerates innovation. International collaborations produced mRNA vaccine technology critical during COVID-19, a breakthrough requiring expertise from dozens of nations simultaneously.\n\nHowever, critics rightly note rising inequality and erosion of local industries. These are genuine concerns. Nevertheless, they are problems to solve within a globalized framework, not reasons to abandon it. Better governance — safety nets, retraining programs — is the answer.\n\nIn conclusion, globalization's contributions to prosperity and knowledge make it a net positive, provided we govern it wisely.`,
+  cet6:`Digital technology has profoundly reshaped campus life. On the positive side, it enables students to access academic resources instantly and collaborate with peers across distances, significantly enhancing learning efficiency. Online platforms also broaden students' horizons beyond the classroom.\n\nHowever, excessive screen time is a growing concern. Many students find themselves distracted by social media during study hours, undermining concentration and academic performance. Furthermore, face-to-face social skills may deteriorate as online interaction increasingly replaces in-person communication.\n\nIn conclusion, technology offers valuable tools for academic advancement, but requires self-discipline and mindful use to prevent its drawbacks from outweighing its benefits.`,
+  cet4:`I prefer studying alone because it maximizes my concentration and suits my personal learning rhythm. When I study independently, I can set my own pace, focus without interruption, and structure my review sessions around my own weak points.\n\nThat said, I recognize the value of group study for certain tasks — for example, discussing difficult concepts or practising oral presentations benefits greatly from collaboration.\n\nNevertheless, for deep, systematic learning, solitary study remains more effective for me. The key is simply matching the study method to the task at hand.`,
+};
+
+const GRADE_LABELS = [
+  {min:0,max:39,label:'Needs Work'},{min:40,max:54,label:'Developing'},
+  {min:55,max:69,label:'Satisfactory'},{min:70,max:84,label:'Proficient'},{min:85,max:100,label:'Excellent'},
+];
+
+const MARKERS = ['on the other hand','for example','for instance','in addition','in conclusion',
+  'to summarize','as a result','on the contrary','by contrast','in fact','however',
+  'therefore','moreover','furthermore','nevertheless','consequently','additionally',
+  'similarly','firstly','secondly','thirdly','finally','that said','even so'];
+
+let exam = null, timerInt = null, secs = 600;
+
+function selectExam(btn) {
+  document.querySelectorAll('.exam-btn').forEach(b => b.classList.remove('sel'));
+  btn.classList.add('sel');
+  exam = btn.dataset.exam;
+  const p = PROMPTS[exam];
+  document.getElementById('preview-text').textContent = p.text;
+  document.getElementById('preview-target').textContent = p.target;
+  document.getElementById('prompt-preview').classList.add('visible');
+  document.getElementById('start-btn').disabled = false;
+}
+
+function startWrite() {
+  if (!exam) return;
+  const p = PROMPTS[exam];
+  document.getElementById('write-prompt').textContent = p.text;
+  document.getElementById('write-target').textContent = p.target;
+  document.getElementById('essay').value = '';
+  document.getElementById('wc-display').textContent = '0 words';
+  secs = 600; updateTimerDisplay();
+  show('screen-write');
+  document.getElementById('essay').focus();
+  clearInterval(timerInt);
+  timerInt = setInterval(() => { secs--; updateTimerDisplay(); if (secs <= 0) { clearInterval(timerInt); submitEssay(); } }, 1000);
+}
+
+function updateTimerDisplay() {
+  const el = document.getElementById('timer');
+  el.textContent = Math.floor(secs/60) + ':' + String(secs%60).padStart(2,'0');
+  el.className = 'timer' + (secs <= 60 ? ' urgent' : '');
+}
+
+function updateWC() {
+  const text = document.getElementById('essay').value;
+  const wc = text.trim() ? text.trim().split(/\s+/).length : 0;
+  document.getElementById('wc-display').textContent = wc + ' word' + (wc !== 1 ? 's' : '');
+}
+
+function scoreEssay(text) {
+  if (!text || text.trim().length < 5) return {total:0,wc:0,wcS:0,sentS:0,lexS:0,cohS:0,hits:[],avgSL:0,uniqR:0};
+  const words = text.trim().split(/\s+/).filter(Boolean);
+  const wc = words.length;
+  const sents = text.split(/[.!?]+/).filter(s => s.trim().length > 3);
+  const avgSL = +(wc / Math.max(sents.length,1)).toFixed(1);
+  const clean = words.map(w => w.toLowerCase().replace(/[^a-z]/g,'')).filter(Boolean);
+  const uniqR = +(new Set(clean).size / Math.max(clean.length,1) * 100).toFixed(0);
+  const lo = text.toLowerCase();
+  const hits = MARKERS.filter(m => lo.includes(m));
+  const tgt = ['cet4','cet6'].includes(exam) ? 100 : 200;
+  const wcS = wc>=tgt?25:wc>=Math.round(tgt*.6)?18:wc>=Math.round(tgt*.3)?10:3;
+  const sentS = avgSL>=10&&avgSL<=25?25:avgSL>=7?15:5;
+  const lexS = uniqR>=60?25:uniqR>=45?18:uniqR>=30?10:5;
+  const cohS = hits.length>=3?25:hits.length>=1?15:5;
+  return {total:Math.min(100,wcS+sentS+lexS+cohS),wc,wcS,sentS,lexS,cohS,hits,avgSL,uniqR};
+}
+
+function highlightMarkers(text) {
+  let html = text.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  [...MARKERS].sort((a,b)=>b.length-a.length).forEach(m => {
+    html = html.replace(new RegExp('('+m.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+')','gi'),'<mark class="mh">$1</mark>');
+  });
+  return html.replace(/\n/g,'<br>');
+}
+
+function submitEssay() {
+  clearInterval(timerInt);
+  const text = document.getElementById('essay').value.trim();
+  const sc = scoreEssay(text);
+  const gl = GRADE_LABELS.find(g => sc.total >= g.min && sc.total <= g.max) || GRADE_LABELS[0];
+  const p = PROMPTS[exam];
+  document.getElementById('eval-meta').textContent = exam.toUpperCase() + ' · ' + p.target.replace('· 10 minutes','').trim() + ' · Submitted ' + new Date().toLocaleTimeString();
+  document.getElementById('score-num').textContent = sc.total;
+  document.getElementById('score-grade').textContent = gl.label;
+  const crits = [
+    {name:'Word Count',val:sc.wc+' words',score:sc.wcS,pct:sc.wcS/25*100},
+    {name:'Sentence Variety',val:'Avg '+sc.avgSL+' words/sent',score:sc.sentS,pct:sc.sentS/25*100},
+    {name:'Lexical Diversity',val:sc.uniqR+'% unique',score:sc.lexS,pct:sc.lexS/25*100},
+    {name:'Discourse Markers',val:sc.hits.length+' found',score:sc.cohS,pct:sc.cohS/25*100},
+  ];
+  document.getElementById('crit-grid').innerHTML = crits.map(c=>
+    '<div class="crit"><div class="crit-label">'+c.name+'</div><div class="crit-row">'+
+    '<span class="crit-val">'+c.score+'/25</span>'+
+    '<div class="crit-bar-bg"><div class="crit-bar-fill" style="width:'+c.pct+'%"></div></div>'+
+    '<span style="font-size:.72rem;opacity:.6">'+c.val+'</span></div></div>'
+  ).join('');
+  const tips = [];
+  if (sc.wcS<25) tips.push({icon:'📏',text:'<strong>Word Count:</strong> Develop each argument with a concrete example to reach the target length.'});
+  if (sc.sentS<25) tips.push({icon:'↔️',text:'<strong>Sentence Variety:</strong> Mix short punchy sentences with longer complex ones for better rhythm.'});
+  if (sc.lexS<25) tips.push({icon:'📚',text:'<strong>Lexical Diversity:</strong> Avoid repeating the same words — use synonyms and paraphrases.'});
+  if (sc.cohS<25) tips.push({icon:'🔗',text:'<strong>Discourse Markers:</strong> Add linking phrases such as: <em>'+MARKERS.filter(m=>!sc.hits.includes(m)).slice(0,4).join(', ')+'</em>.'});
+  if (tips.length===0) tips.push({icon:'✦',text:'<strong>Excellent cohesion and structure.</strong> Focus on refining word choices and ensuring every claim has a specific example.'});
+  document.getElementById('tips-wrap').innerHTML = tips.map(t=>'<div class="tip-card"><span class="tip-icon">'+t.icon+'</span><div class="tip-text">'+t.text+'</div></div>').join('');
+  document.getElementById('student-essay').innerHTML = text ? highlightMarkers(text) : '<em style="opacity:.5">No response was submitted.</em>';
+  document.getElementById('sample-essay').innerHTML = highlightMarkers(SAMPLES[exam]||SAMPLES.toefl);
+  show('screen-eval');
+}
+
+function show(id) {
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+function tryAgain() { clearInterval(timerInt); startWrite(); }
+function changeExam() {
+  clearInterval(timerInt); exam=null;
+  document.querySelectorAll('.exam-btn').forEach(b=>b.classList.remove('sel'));
+  document.getElementById('start-btn').disabled=true;
+  document.getElementById('prompt-preview').classList.remove('visible');
+  show('screen-intro');
+}
+</script>
+</body>
+</html>
