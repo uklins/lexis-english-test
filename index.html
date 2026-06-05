@@ -226,6 +226,22 @@ mark.mh{background:#F0C060;color:var(--ink);border-radius:3px;padding:0 2px}
 .rev-no{font-size:.75rem;font-weight:600;color:var(--error);background:var(--error-light);padding:.18rem .58rem;border-radius:100px}
 .rev-skip{font-size:.75rem;font-weight:600;color:var(--ink-muted);background:var(--border-light);padding:.18rem .58rem;border-radius:100px}
 .attribution{font-size:.68rem;color:var(--ink-muted);text-align:center;margin-top:.35rem}
+/* LOADING */
+#screen-writing-loading{align-items:center;justify-content:center}
+.loading-card{text-align:center;padding:2.5rem 2rem}
+.spinner{width:48px;height:48px;border:3px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin .75s linear infinite;margin:0 auto 1.4rem}
+@keyframes spin{to{transform:rotate(360deg)}}
+.loading-title{font-family:'Cormorant Garamond',serif;font-size:1.5rem;font-weight:600;color:var(--ink);margin-bottom:.4rem}
+.loading-sub{font-size:.82rem;color:var(--ink-muted)}
+/* CODE INPUT */
+.code-row{display:flex;align-items:center;gap:.65rem;margin-bottom:.9rem;flex-wrap:wrap}
+.code-input{padding:.6rem .9rem;border:1.5px solid var(--border);border-radius:8px;font-family:'Sora',sans-serif;font-size:.85rem;background:var(--card);color:var(--ink);width:220px;transition:border-color .2s}
+.code-input:focus{outline:none;border-color:var(--accent)}
+.code-err{font-size:.76rem;color:var(--error);display:none}
+/* AI EVAL */
+.ai-score-badge{display:inline-block;font-family:'Cormorant Garamond',serif;font-size:2rem;font-weight:700;color:#F0C060;line-height:1}
+.ai-feedback-box{background:var(--card);border:1px solid var(--border);border-left:3px solid var(--accent);border-radius:0 var(--r) var(--r) 0;padding:1rem 1.3rem;font-size:.875rem;line-height:1.8;color:var(--ink-mid);margin-bottom:1.2rem}
+.fallback-note{font-size:.73rem;color:var(--ink-muted);background:var(--border-light);padding:.5rem .8rem;border-radius:6px;margin-bottom:1rem}
 </style>
 </head>
 <body>
@@ -354,8 +370,21 @@ mark.mh{background:#F0C060;color:var(--ink);border-radius:3px;padding:0 2px}
         <span class="writing-wc" id="writing-wc">0 words</span>
       </div>
       <textarea id="essay-area" placeholder="Begin writing your response here…" oninput="updateWC()"></textarea>
+      <div class="code-row">
+        <input type="text" id="essay-code" class="code-input" placeholder="Submission code" autocomplete="off">
+        <span id="essay-code-err" class="code-err">Invalid code — please check with your teacher.</span>
+      </div>
       <button class="submit-essay-btn" onclick="trySubmitEssay()">Submit Essay →</button>
     </div>
+  </div>
+</div>
+
+<!-- WRITING LOADING -->
+<div id="screen-writing-loading" class="screen">
+  <div class="loading-card">
+    <div class="spinner"></div>
+    <div class="loading-title">Grading your essay…</div>
+    <div class="loading-sub">AI is analysing your writing. This usually takes 5–15 seconds.</div>
   </div>
 </div>
 
@@ -365,8 +394,15 @@ mark.mh{background:#F0C060;color:var(--ink);border-radius:3px;padding:0 2px}
     <div class="eval-wrap">
       <div class="eval-score-card">
         <div class="eval-score-num" id="eval-score-num">—</div>
-        <div class="eval-score-sub">Writing Score / 100</div>
+        <div class="eval-score-sub" id="eval-score-sub">Writing Score / 100</div>
         <div class="eval-criteria" id="eval-criteria"></div>
+      </div>
+      <div id="eval-ai-feedback-section" style="display:none">
+        <div class="eval-section-title">AI Feedback</div>
+        <div class="ai-feedback-box" id="eval-ai-feedback"></div>
+      </div>
+      <div id="eval-fallback-note" class="fallback-note" style="display:none">
+        AI grading was unavailable — score is based on structural analysis only.
       </div>
       <div class="eval-section-title">Your Response</div>
       <div class="eval-essay-box" id="eval-student-essay"></div>
@@ -1102,16 +1138,41 @@ function updateWC() {
 }
 
 function trySubmitEssay() {
-  showModal('Submit Essay?', 'Submit your essay now?', doSubmitEssay);
+  const code = document.getElementById('essay-code').value.trim();
+  const errEl = document.getElementById('essay-code-err');
+  if (code !== 'ASD131KJS09') {
+    errEl.style.display = 'inline';
+    document.getElementById('essay-code').style.borderColor = 'var(--error)';
+    return;
+  }
+  errEl.style.display = 'none';
+  document.getElementById('essay-code').style.borderColor = '';
+  showModal('Submit Essay?', 'Submit your essay for AI grading?', doSubmitEssay);
 }
 
-function doSubmitEssay() {
+async function doSubmitEssay() {
   clearInterval(essayTimerInterval);
   const text = document.getElementById('essay-area').value.trim();
   S.writingText = text;
-  const sc = scoreEssay(text);
-  S.writingScore = typeof sc === 'object' ? sc.total : sc;
-  showWritingEval(sc);
+  const localSc = scoreEssay(text);
+
+  show('screen-writing-loading');
+
+  try {
+    const res = await fetch('https://lexis-grader.mhtcgyj7st.workers.dev/', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({essay: text}),
+    });
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    const ai = await res.json();
+    // ai.score = 0–5
+    S.writingScore = Math.round((ai.score / 5) * 100);
+    showWritingEval(localSc, ai);
+  } catch (e) {
+    S.writingScore = localSc.total;
+    showWritingEval(localSc, null);
+  }
 }
 
 function scoreEssay(text) {
@@ -1148,14 +1209,32 @@ function highlightMarkers(text) {
   return html.replace(/\n/g, '<br>');
 }
 
-function showWritingEval(sc) {
+function showWritingEval(sc, ai) {
   if (typeof sc !== 'object') sc = { total:S.writingScore||0, wc:0, wcS:0, sentS:0, lexS:0, cohS:0, hits:0 };
-  document.getElementById('eval-score-num').textContent = sc.total;
-  document.getElementById('eval-criteria').innerHTML =
-    '<div class="eval-crit"><div class="eval-crit-name">Word Count</div><div class="eval-crit-val">' + sc.wc + ' words · ' + sc.wcS + '/25</div></div>' +
-    '<div class="eval-crit"><div class="eval-crit-name">Sentence Variety</div><div class="eval-crit-val">' + sc.sentS + ' / 25</div></div>' +
-    '<div class="eval-crit"><div class="eval-crit-name">Lexical Diversity</div><div class="eval-crit-val">' + sc.lexS + ' / 25</div></div>' +
-    '<div class="eval-crit"><div class="eval-crit-name">Discourse Markers</div><div class="eval-crit-val">' + sc.hits + ' found · ' + sc.cohS + '/25</div></div>';
+
+  if (ai) {
+    // AI grading: show 0-5 score prominently
+    document.getElementById('eval-score-num').textContent = (ai.score || 0).toFixed(1) + ' / 5';
+    document.getElementById('eval-score-sub').textContent = 'AI Writing Score';
+    document.getElementById('eval-criteria').innerHTML =
+      '<div class="eval-crit"><div class="eval-crit-name">Word Count</div><div class="eval-crit-val">' + sc.wc + ' words</div></div>' +
+      '<div class="eval-crit"><div class="eval-crit-name">Discourse Markers</div><div class="eval-crit-val">' + sc.hits + ' found</div></div>';
+    document.getElementById('eval-ai-feedback').textContent = ai.feedback || '';
+    document.getElementById('eval-ai-feedback-section').style.display = 'block';
+    document.getElementById('eval-fallback-note').style.display = 'none';
+  } else {
+    // Fallback: rule-based
+    document.getElementById('eval-score-num').textContent = sc.total;
+    document.getElementById('eval-score-sub').textContent = 'Writing Score / 100 (structural)';
+    document.getElementById('eval-criteria').innerHTML =
+      '<div class="eval-crit"><div class="eval-crit-name">Word Count</div><div class="eval-crit-val">' + sc.wc + ' words · ' + sc.wcS + '/25</div></div>' +
+      '<div class="eval-crit"><div class="eval-crit-name">Sentence Variety</div><div class="eval-crit-val">' + sc.sentS + ' / 25</div></div>' +
+      '<div class="eval-crit"><div class="eval-crit-name">Lexical Diversity</div><div class="eval-crit-val">' + sc.lexS + ' / 25</div></div>' +
+      '<div class="eval-crit"><div class="eval-crit-name">Discourse Markers</div><div class="eval-crit-val">' + sc.hits + ' found · ' + sc.cohS + '/25</div></div>';
+    document.getElementById('eval-ai-feedback-section').style.display = 'none';
+    document.getElementById('eval-fallback-note').style.display = 'block';
+  }
+
   document.getElementById('eval-student-essay').innerHTML = highlightMarkers(S.writingText || '(No response submitted)');
   const sampleKey = S.writingPrompt ? S.writingPrompt.sampleKey : 'glob';
   document.getElementById('eval-sample-text').innerHTML = highlightMarkers(WRITING_SAMPLES[sampleKey] || WRITING_SAMPLES.glob);
