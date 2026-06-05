@@ -1310,7 +1310,7 @@ function showWritingTask() {
   essayTimerInterval = setInterval(() => {
     essaySecs--;
     updateEssayTimer();
-    if (essaySecs <= 0) { clearInterval(essayTimerInterval); doSubmitEssay(); }
+    if (essaySecs <= 0) { clearInterval(essayTimerInterval); doSubmitEssay(true); }
   }, 1000);
 }
 
@@ -1332,7 +1332,8 @@ function updateWC() {
 function trySubmitEssay() {
   const code = document.getElementById('essay-code').value.trim();
   const errEl = document.getElementById('essay-code-err');
-  if (code !== 'ASD131KJS09') {
+  if (!code) {
+    errEl.textContent = 'Enter your submission code first.';
     errEl.style.display = 'inline';
     document.getElementById('essay-code').style.borderColor = 'var(--error)';
     return;
@@ -1342,20 +1343,40 @@ function trySubmitEssay() {
   showModal('Submit Essay?', 'Submit your essay for AI grading?', doSubmitEssay);
 }
 
-async function doSubmitEssay() {
+async function doSubmitEssay(auto) {
   clearInterval(essayTimerInterval);
   const text = document.getElementById('essay-area').value.trim();
   S.writingText = text;
   const localSc = scoreEssay(text);
-
   show('screen-writing-loading');
+
+  if (auto) {
+    S.writingScore = Math.min(5, Math.round(localSc.total / 20)) * 15;
+    showWritingEval(localSc, null);
+    return;
+  }
+
+  const code = document.getElementById('essay-code').value.trim();
 
   try {
     const res = await fetch('https://lexis-grader.mhtcgyj7st.workers.dev/', {
       method: 'POST',
       headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify({essay: text, prompt: S.writingPrompt ? S.writingPrompt.text : ''}),
+      body: JSON.stringify({ essay: text, prompt: S.writingPrompt ? S.writingPrompt.text : '', code }),
     });
+    if (res.status === 403) {
+      const errEl = document.getElementById('essay-code-err');
+      errEl.textContent = 'Invalid code — please check with your teacher.';
+      errEl.style.display = 'inline';
+      document.getElementById('essay-code').style.borderColor = 'var(--error)';
+      show('screen-writing-task');
+      essayTimerInterval = setInterval(() => {
+        essaySecs--;
+        updateEssayTimer();
+        if (essaySecs <= 0) { clearInterval(essayTimerInterval); doSubmitEssay(true); }
+      }, 1000);
+      return;
+    }
     if (!res.ok) throw new Error('HTTP ' + res.status);
     const ai = await res.json();
     S.writingScore = Math.round(ai.score) * 15;
