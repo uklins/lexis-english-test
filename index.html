@@ -199,11 +199,15 @@ mark.mh{background:#F0C060;color:var(--ink);border-radius:3px;padding:0 2px}
 .modal-confirm{padding:.55rem 1.1rem;background:var(--ink);color:#F5EFE6;border:none;border-radius:8px;font-family:'Sora',sans-serif;font-size:.82rem;font-weight:500;cursor:pointer;transition:all .18s}
 .modal-confirm:hover{background:var(--accent)}
 .modal-confirm.danger{background:var(--error)}.modal-confirm.danger:hover{background:#6B1515}
-.mod-timer{font-family:'Cormorant Garamond',serif;font-size:1.35rem;font-weight:600;color:var(--ink-mid);letter-spacing:.04em;min-width:46px;text-align:center;transition:color .3s}
+.mod-timer{font-family:'Sora',sans-serif;font-size:1.35rem;font-weight:600;color:var(--ink-mid);letter-spacing:.04em;min-width:46px;text-align:center;transition:color .3s}
 .mod-timer.urgent{color:var(--error);animation:blink .9s infinite}
+.timer-danger{color:var(--error) !important;animation:blink .9s infinite}
+#timer-warn{display:none;background:#fff5f5;border:1px solid var(--error);color:var(--error);font-size:.7rem;font-weight:500;padding:.15rem .6rem;border-radius:4px;margin-left:.5rem;vertical-align:middle;white-space:nowrap}
 @keyframes blink{0%,100%{opacity:1}50%{opacity:.4}}
 .skip-btn{padding:.3rem .8rem;border:1.5px solid var(--border);background:transparent;color:var(--ink-muted);border-radius:6px;font-family:'Sora',sans-serif;font-size:.7rem;cursor:pointer;transition:all .18s;white-space:nowrap}
 .skip-btn:hover{border-color:var(--error);color:var(--error)}
+.submit-mod-hdr{padding:.3rem .8rem;border:1.5px solid var(--ink);background:var(--ink);color:#F5EFE6;border-radius:6px;font-family:'Sora',sans-serif;font-size:.7rem;font-weight:500;cursor:pointer;transition:all .18s;white-space:nowrap}
+.submit-mod-hdr:hover{background:var(--accent);border-color:var(--accent)}
 .q-nav-bar{display:flex;align-items:center;gap:.5rem;margin-top:1.2rem;margin-bottom:.7rem}
 .nav-btn{padding:.45rem .85rem;border:1.5px solid var(--border);background:var(--card);color:var(--ink-mid);border-radius:8px;font-family:'Sora',sans-serif;font-size:.76rem;cursor:pointer;transition:all .18s;flex-shrink:0}
 .nav-btn:hover:not([disabled]){border-color:var(--accent);color:var(--accent)}
@@ -242,6 +246,38 @@ mark.mh{background:#F0C060;color:var(--ink);border-radius:3px;padding:0 2px}
 .ai-score-badge{display:inline-block;font-family:'Cormorant Garamond',serif;font-size:2rem;font-weight:700;color:#F0C060;line-height:1}
 .ai-feedback-box{background:var(--card);border:1px solid var(--border);border-left:3px solid var(--accent);border-radius:0 var(--r) var(--r) 0;padding:1rem 1.3rem;font-size:.875rem;line-height:1.8;color:var(--ink-mid);margin-bottom:1.2rem}
 .fallback-note{font-size:.73rem;color:var(--ink-muted);background:var(--border-light);padding:.5rem .8rem;border-radius:6px;margin-bottom:1rem}
+/* RUBRIC TABLE */
+.rubric-table{width:100%;border-collapse:collapse;margin:.5rem 0 1.4rem;font-size:.83rem}
+.rubric-table th{text-align:left;padding:.45rem .7rem;background:var(--border-light);color:var(--ink-muted);font-size:.68rem;letter-spacing:.08em;text-transform:uppercase;font-weight:600}
+.rubric-table td{padding:.5rem .7rem;border-bottom:1px solid var(--border-light);color:var(--ink-mid);line-height:1.55;vertical-align:top}
+.rubric-table td:first-child{font-weight:700;color:var(--ink);font-size:1rem;width:60px;text-align:center}
+.rubric-table tr:last-child td{border-bottom:none}
+/* PRETEST SCREEN */
+#screen-pretest{align-items:center;justify-content:center;padding:2rem}
+.pretest-card{max-width:440px;width:100%;background:var(--card);border:1px solid var(--border);border-radius:20px;padding:2.4rem 2.2rem;box-shadow:var(--shadow-lg)}
+.pt-brand{font-family:'Cormorant Garamond',serif;font-size:1.3rem;font-weight:600;color:var(--ink);text-align:center;margin-bottom:1.6rem;letter-spacing:.06em}
+.pt-section{margin-bottom:1.1rem;padding-bottom:1.1rem;border-bottom:1px solid var(--border-light)}
+.pt-section:last-of-type{border-bottom:none;margin-bottom:0;padding-bottom:0}
+.pt-title{font-size:.72rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-muted);margin-bottom:.55rem}
+.pt-row{display:flex;align-items:flex-start;justify-content:space-between;gap:1rem;padding:.25rem 0;font-size:.84rem;color:var(--ink-mid)}
+.pt-val{font-weight:600;color:var(--ink);white-space:nowrap;text-align:right;flex-shrink:0}
+.pt-credit{text-align:center;font-size:.72rem;color:var(--ink-muted);margin-top:.9rem;letter-spacing:.04em}
+/* WRITING INTRO SCREEN */
+#screen-writing-intro{align-items:center;justify-content:center;padding:2rem}
+.writing-intro-card{max-width:420px;width:100%;background:var(--card);border:1px solid var(--border);border-radius:20px;padding:2.4rem 2.2rem;box-shadow:var(--shadow-lg)}
+.wi-header{text-align:center;margin-bottom:1.5rem}
+.wi-title{font-family:'Cormorant Garamond',serif;font-size:1.9rem;font-weight:600;color:var(--ink);margin:.3rem 0 .15rem}
+.wi-sub{font-size:.68rem;color:var(--ink-muted);letter-spacing:.1em;text-transform:uppercase}
+.wi-section{margin-bottom:1.1rem;padding-bottom:1.1rem;border-bottom:1px solid var(--border-light)}
+.wi-section:last-of-type{border-bottom:none;margin-bottom:0;padding-bottom:0}
+.wi-sec-title{font-size:.68rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-muted);margin-bottom:.65rem}
+.wi-row{display:flex;align-items:center;justify-content:space-between;gap:.8rem;padding:.3rem 0}
+.wi-part-name{font-size:.88rem;font-weight:500;color:var(--ink)}
+.wi-part-detail{font-size:.7rem;color:var(--ink-muted);margin-top:.1rem}
+.wi-pts{font-size:1.05rem;font-weight:700;color:var(--accent-dark);min-width:50px;text-align:right}
+.wi-scale{font-size:.72rem;color:var(--ink-muted);margin-top:.55rem;padding:.4rem .7rem;background:var(--accent-light);border-radius:6px;text-align:center}
+.wi-rubric-row{display:flex;align-items:flex-start;gap:.5rem;font-size:.84rem;color:var(--ink-mid);line-height:1.55;padding:.2rem 0}
+.wi-rubric-dot{color:var(--accent);flex-shrink:0;margin-top:.15rem}
 </style>
 </head>
 <body>
@@ -292,6 +328,65 @@ mark.mh{background:#F0C060;color:var(--ink);border-radius:3px;padding:0 2px}
   </div>
 </div>
 
+<!-- PRE-TEST -->
+<div id="screen-pretest" class="screen">
+  <div style="flex:1;display:flex;align-items:center;justify-content:center;padding:2rem">
+    <div class="pretest-card">
+      <div class="pt-brand">LEXIS · Test Instructions</div>
+      <div class="pt-section">
+        <div class="pt-title">⏱ Module Times</div>
+        <div class="pt-row"><span>Vocabulary · Grammar · Writing MCQ</span><span class="pt-val">2:30</span></div>
+        <div class="pt-row"><span>Reading</span><span class="pt-val">4:00</span></div>
+        <div class="pt-row"><span>Writing Essay</span><span class="pt-val">10:00</span></div>
+      </div>
+      <div class="pt-section">
+        <div class="pt-title">🎯 Adaptive Scoring</div>
+        <div class="pt-row"><span>Module 1 ≥ 3/5 correct</span><span class="pt-val">Advanced path · up to 100%</span></div>
+        <div class="pt-row"><span>Module 1 &lt; 3/5 correct</span><span class="pt-val">Foundation path · up to 65%</span></div>
+      </div>
+      <div class="pt-section">
+        <div class="pt-title">⏭ Skipping</div>
+        <div class="pt-row"><span>Skip Module 1</span><span class="pt-val">Section scores 0</span></div>
+        <div class="pt-row"><span>Skip Module 2 / Essay</span><span class="pt-val">M1 score preserved</span></div>
+      </div>
+      <button class="cont-btn" onclick="beginTest()" style="width:100%;margin-top:1.4rem">I Understand — Begin Test →</button>
+      <div class="pt-credit">Created by 洛可薇Leachoy</div>
+    </div>
+  </div>
+</div>
+
+<!-- WRITING INTRO -->
+<div id="screen-writing-intro" class="screen">
+  <div style="flex:1;display:flex;align-items:center;justify-content:center;padding:2rem">
+    <div class="writing-intro-card">
+      <div class="wi-header">
+        <div style="font-size:1.6rem;margin-bottom:.3rem">📝</div>
+        <div class="wi-title">Writing Section</div>
+        <div class="wi-sub">Section 4 of 4</div>
+      </div>
+      <div class="wi-section">
+        <div class="wi-sec-title">Structure &amp; Scoring</div>
+        <div class="wi-row">
+          <div><div class="wi-part-name">Grammar &amp; Editing MCQ</div><div class="wi-part-detail">5 questions × 5 pts each</div></div>
+          <div class="wi-pts">25 pts</div>
+        </div>
+        <div class="wi-row">
+          <div><div class="wi-part-name">Essay</div><div class="wi-part-detail">AI-graded · 10 min</div></div>
+          <div class="wi-pts">75 pts</div>
+        </div>
+        <div class="wi-scale">Essay score scale: 0 · 15 · 30 · 45 · 60 · 75</div>
+      </div>
+      <div class="wi-section">
+        <div class="wi-sec-title">Essay Rubric</div>
+        <div class="wi-rubric-row"><span class="wi-rubric-dot">●</span><span><strong>Clear Position</strong> — state your stance directly</span></div>
+        <div class="wi-rubric-row"><span class="wi-rubric-dot">●</span><span><strong>Strong Arguments</strong> — support with reasoning (examples optional)</span></div>
+        <div class="wi-rubric-row"><span class="wi-rubric-dot">●</span><span><strong>Language Quality</strong> — accuracy, variety, and natural expression</span></div>
+      </div>
+      <button class="cont-btn" onclick="startWritingSection()" style="width:100%;margin-top:1.4rem">Begin Writing Test →</button>
+    </div>
+  </div>
+</div>
+
 <!-- TEST -->
 <div id="screen-test" class="screen">
   <header class="test-hdr">
@@ -302,10 +397,12 @@ mark.mh{background:#F0C060;color:var(--ink);border-radius:3px;padding:0 2px}
         <div class="pip" id="pip-2"></div><div class="pip" id="pip-3"></div>
       </div>
       <div class="mod-timer" id="mod-timer">2:30</div>
+      <span id="timer-warn">⏰ 30s left</span>
     </div>
     <div style="display:flex;align-items:center;gap:.6rem">
       <div class="q-counter" id="q-counter">Vocabulary · M1: 1 / 5</div>
       <button class="skip-btn" onclick="trySkipModule()">Skip</button>
+      <button class="submit-mod-hdr" onclick="trySubmitModule()">Submit →</button>
     </div>
   </header>
   <div class="test-body"><div class="q-card" id="q-card"></div></div>
@@ -324,8 +421,8 @@ mark.mh{background:#F0C060;color:var(--ink);border-radius:3px;padding:0 2px}
   <div class="review-score-bar">Module Complete · <strong id="rev-score">0 / 5 correct</strong></div>
   <div class="test-body" style="align-items:flex-start">
     <div class="rev-wrap">
+      <button class="cont-btn" id="rev-cont-btn" onclick="continueFromReview()" style="width:100%;margin-bottom:1.2rem">Continue →</button>
       <div id="rev-items"></div>
-      <button class="cont-btn" id="rev-cont-btn" onclick="continueFromReview()" style="width:100%;margin-top:.3rem">Continue →</button>
       <div style="height:1.5rem"></div>
     </div>
   </div>
@@ -394,22 +491,28 @@ mark.mh{background:#F0C060;color:var(--ink);border-radius:3px;padding:0 2px}
     <div class="eval-wrap">
       <div class="eval-score-card">
         <div class="eval-score-num" id="eval-score-num">—</div>
-        <div class="eval-score-sub" id="eval-score-sub">Writing Score / 100</div>
-        <div class="eval-criteria" id="eval-criteria"></div>
+        <div class="eval-score-sub" id="eval-score-sub">AI Writing Score / 5</div>
+        <div id="eval-score-detail" style="font-size:.75rem;opacity:.6;margin-top:.5rem;letter-spacing:.04em"></div>
       </div>
-      <div id="eval-ai-feedback-section" style="display:none">
+      <div id="eval-ai-feedback-section" style="display:none;margin:1.4rem 0">
         <div class="eval-section-title">AI Feedback</div>
         <div class="ai-feedback-box" id="eval-ai-feedback"></div>
       </div>
       <div id="eval-fallback-note" class="fallback-note" style="display:none">
-        AI grading was unavailable — score is based on structural analysis only.
+        AI grading was unavailable — score is estimated from structural analysis.
       </div>
-      <div class="eval-section-title">Your Response</div>
-      <div class="eval-essay-box" id="eval-student-essay"></div>
-      <div class="eval-section-title">Sample Response</div>
-      <div class="eval-note">Discourse markers are <mark class="mh">highlighted</mark> in both texts. Compare your use of linking words and essay structure.</div>
-      <div class="eval-sample-box" id="eval-sample-text"></div>
-      <br>
+      <div class="eval-section-title">Self-Check Rubric</div>
+      <table class="rubric-table">
+        <thead><tr><th>Score</th><th>Description</th></tr></thead>
+        <tbody>
+          <tr><td>5</td><td>Clear position; compelling argument; fluent and accurate language</td></tr>
+          <tr><td>4</td><td>Clear position; solid argument; mostly accurate, minor errors</td></tr>
+          <tr><td>3</td><td>Position present; some support; occasional noticeable errors</td></tr>
+          <tr><td>2</td><td>Weak position; limited development; frequent errors</td></tr>
+          <tr><td>1</td><td>Minimal attempt; significant language problems</td></tr>
+          <tr><td>0</td><td>Off-topic, blank, or incomprehensible</td></tr>
+        </tbody>
+      </table>
       <button class="cont-btn" onclick="continueFromWriting()">Continue →</button>
     </div>
   </div>
@@ -746,8 +849,8 @@ const LVL_MAP  = ['beginner','elementary','intermediate','advanced'];
 const LVL_DISP = [
   {en:'Beginner',cn:'入门级',desc:'相当于 CET-4 备考初期水平，建议以词汇积累和基础语法为核心学习目标。',c:'#8B1F1F',bg:'#FBE8E8'},
   {en:'Elementary',cn:'初级',desc:'达到 CET-4 / CET-6 准备阶段水平。语言基础已初步建立，需强化综合应用能力。',c:'#7A5100',bg:'#FFF3D6'},
-  {en:'Intermediate',cn:'中级',desc:'相当于 IELTS 6.0–6.5 / TOEFL 75–85 水平。综合能力良好，具备冲刺高分区间的潜力。',c:'#2A6348',bg:'#E8F5EE'},
-  {en:'Advanced',cn:'高级',desc:'相当于 IELTS 7.0+ / TOEFL 100+ 水平。具备出色的英语综合能力，可向顶级院校学术申请迈进。',c:'#3A2E8A',bg:'#EAE8FF'},
+  {en:'Intermediate',cn:'中级',desc:'相当于 IELTS 6.0–6.5 / TOEFL 72–93 水平。综合能力良好，具备冲刺高分区间的潜力。',c:'#2A6348',bg:'#E8F5EE'},
+  {en:'Advanced',cn:'高级',desc:'相当于 IELTS 7.0+ / TOEFL 94+ 水平。具备出色的英语综合能力，可向顶级院校学术申请迈进。',c:'#3A2E8A',bg:'#EAE8FF'},
 ];
 const MOD_TIME = {
   vocab:{1:150,2:150}, grammar:{1:150,2:150},
@@ -783,11 +886,13 @@ function show(id) {
 function lvl(p) { return p < 40 ? 0 : p < 65 ? 1 : p < 85 ? 2 : 3; }
 
 function sectionPct(i) {
-  const m1 = S.m1Correct[i];
-  let m2 = (i === 3 && S.writingScore !== null) ? S.writingScore / 20 : S.m2Correct[i];
+  if (i === 3) {
+    return (S.m1Correct[3] * 5) + (S.writingScore !== null ? S.writingScore : 0);
+  }
+  const total = S.m1Correct[i] + S.m2Correct[i];
   return S.m2Hard[i]
-    ? Math.round(50 + ((m1 + m2) / 10) * 50)
-    : Math.round(((m1 + m2) / 10) * 65);
+    ? Math.round(25 + (total / 10) * 75)
+    : Math.round((total / 10) * 93);
 }
 
 function shuffleQ(q) {
@@ -836,10 +941,20 @@ function startModTimer() {
   clearInterval(modTimerInterval);
   const key = SECS[S.secIdx];
   S.modSecs = (MOD_TIME[key] || MOD_TIME.vocab)[S.module];
+  const warn = document.getElementById('timer-warn');
+  if (warn) warn.style.display = 'none';
+  const timerEl = document.getElementById('mod-timer');
+  if (timerEl) timerEl.classList.remove('timer-danger');
   updateModTimer();
   modTimerInterval = setInterval(() => {
     S.modSecs--;
     updateModTimer();
+    if (S.modSecs === 30) {
+      const el = document.getElementById('mod-timer');
+      if (el) el.classList.add('timer-danger');
+      const w = document.getElementById('timer-warn');
+      if (w) w.style.display = 'inline';
+    }
     if (S.modSecs <= 0) { clearInterval(modTimerInterval); submitModule(true); }
   }, 1000);
 }
@@ -850,7 +965,6 @@ function updateModTimer() {
   const m = Math.floor(S.modSecs / 60);
   const s = S.modSecs % 60;
   el.textContent = m + ':' + String(s).padStart(2,'0');
-  el.className = 'mod-timer' + (S.modSecs <= 30 ? ' urgent' : '');
 }
 
 // ─── MODULE LOAD & RENDER ────────────────────────────────────
@@ -907,8 +1021,7 @@ function renderModuleQ(idx) {
       '<button class="nav-btn"' + (idx===0?' disabled':'') + ' onclick="renderModuleQ(' + (idx-1) + ')">← Prev</button>' +
       '<div class="q-dots">' + dots + '</div>' +
       '<button class="nav-btn"' + (idx===S.moduleQs.length-1?' disabled':'') + ' onclick="renderModuleQ(' + (idx+1) + ')">Next →</button>' +
-    '</div>' +
-    '<button class="submit-mod-btn" onclick="trySubmitModule()">Submit Module →</button>';
+    '</div>';
 }
 
 function answerQ(optIdx) {
@@ -1032,6 +1145,10 @@ function startTest() {
   S = initState();
   S.exam = exam;
   S.examGroup = ['toefl','ielts','sat'].includes(exam) ? 'A' : 'B';
+  show('screen-pretest');
+}
+
+function beginTest() {
   updatePips();
   loadModule();
   show('screen-test');
@@ -1042,18 +1159,28 @@ function startTest() {
 function showModuleBridge() {
   const i = S.secIdx;
   const key = SECS[i];
-  const isHard = S.m1Correct[i] >= 4;
-  S.m2Hard[i] = isHard;
   const isWriting = i === 3;
+  if (isWriting) {
+    S.m2Hard[i] = false;
+  } else {
+    S.m2Hard[i] = S.m1Correct[i] >= 3;
+  }
+  const isHard = S.m2Hard[i];
   document.getElementById('bridge-icon').textContent = SEC_ICON[key];
   document.getElementById('bridge-sec-lbl').textContent = SEC_NAME[key] + ' · Module 1 Complete';
   document.getElementById('bridge-score-lbl').textContent = S.m1Correct[i] + ' / 5';
   const badge = document.getElementById('bridge-path-badge');
-  badge.textContent = isHard ? 'Advanced Module' : 'Foundation Module';
-  badge.className = 'bridge-path-badge ' + (isHard ? 'hard' : 'easy');
-  document.getElementById('bridge-msg').textContent = isHard
-    ? 'Strong start — you\'ve unlocked the Advanced Module.'
-    : 'Foundation Module ahead — build accuracy from here.';
+  if (isWriting) {
+    badge.textContent = 'Essay Task';
+    badge.className = 'bridge-path-badge';
+    document.getElementById('bridge-msg').textContent = 'Module 1 complete. The essay task follows.';
+  } else {
+    badge.textContent = isHard ? 'Advanced Module' : 'Foundation Module';
+    badge.className = 'bridge-path-badge ' + (isHard ? 'hard' : 'easy');
+    document.getElementById('bridge-msg').textContent = isHard
+      ? 'Strong start — you\'ve unlocked the Advanced Module.'
+      : 'Foundation Module ahead — build accuracy from here.';
+  }
   document.getElementById('bridge-btn').textContent = isWriting ? 'Begin Writing Task →' : 'Begin Module 2 →';
   show('screen-module-bridge');
 }
@@ -1080,7 +1207,7 @@ function endSection() {
   document.getElementById('sec-title').textContent = SEC_NAME[key] + ' Complete';
   let sub;
   if (i === 3) {
-    sub = 'M1: ' + S.m1Correct[i] + '/5 · Essay: ' + (S.writingScore || 0) + '%';
+    sub = 'MCQ: ' + (S.m1Correct[3] * 5) + '/25 · Essay: ' + (S.writingScore || 0) + '/75';
   } else {
     sub = (S.m1Correct[i] + S.m2Correct[i]) + ' / 10 correct · ' + (S.m2Hard[i] ? 'Advanced' : 'Foundation') + ' path';
   }
@@ -1095,6 +1222,20 @@ function continueSection() {
   S.secIdx++;
   if (S.secIdx >= 4) { showResults(); return; }
   S.module = 1;
+  if (S.secIdx === 3) { showWritingIntro(); return; }
+  loadModule();
+  show('screen-test');
+  updatePips();
+  renderModuleQ(0);
+  startModTimer();
+}
+
+function showWritingIntro() {
+  updatePips();
+  show('screen-writing-intro');
+}
+
+function startWritingSection() {
   loadModule();
   show('screen-test');
   updatePips();
@@ -1162,15 +1303,14 @@ async function doSubmitEssay() {
     const res = await fetch('https://lexis-grader.mhtcgyj7st.workers.dev/', {
       method: 'POST',
       headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify({essay: text}),
+      body: JSON.stringify({essay: text, prompt: S.writingPrompt ? S.writingPrompt.text : ''}),
     });
     if (!res.ok) throw new Error('HTTP ' + res.status);
     const ai = await res.json();
-    // ai.score = 0–5
-    S.writingScore = Math.round((ai.score / 5) * 100);
+    S.writingScore = Math.round(ai.score) * 15;
     showWritingEval(localSc, ai);
   } catch (e) {
-    S.writingScore = localSc.total;
+    S.writingScore = Math.min(5, Math.round(localSc.total / 20)) * 15;
     showWritingEval(localSc, null);
   }
 }
@@ -1210,34 +1350,30 @@ function highlightMarkers(text) {
 }
 
 function showWritingEval(sc, ai) {
-  if (typeof sc !== 'object') sc = { total:S.writingScore||0, wc:0, wcS:0, sentS:0, lexS:0, cohS:0, hits:0 };
+  if (typeof sc !== 'object') sc = { total:0, wc:0, hits:0 };
+  const mcqPts = S.m1Correct[3] * 5;
+  const essayPts = S.writingScore || 0;
+  const secTotal = mcqPts + essayPts;
 
   if (ai) {
-    // AI grading: show 0-5 score prominently
-    document.getElementById('eval-score-num').textContent = (ai.score || 0).toFixed(1) + ' / 5';
+    const intScore = Math.round(ai.score);
+    document.getElementById('eval-score-num').textContent = intScore + ' / 5';
     document.getElementById('eval-score-sub').textContent = 'AI Writing Score';
-    document.getElementById('eval-criteria').innerHTML =
-      '<div class="eval-crit"><div class="eval-crit-name">Word Count</div><div class="eval-crit-val">' + sc.wc + ' words</div></div>' +
-      '<div class="eval-crit"><div class="eval-crit-name">Discourse Markers</div><div class="eval-crit-val">' + sc.hits + ' found</div></div>';
+    document.getElementById('eval-score-detail').textContent =
+      'MCQ: ' + mcqPts + '/25 · Essay: ' + essayPts + '/75 · Section: ' + secTotal + '%';
     document.getElementById('eval-ai-feedback').textContent = ai.feedback || '';
     document.getElementById('eval-ai-feedback-section').style.display = 'block';
     document.getElementById('eval-fallback-note').style.display = 'none';
   } else {
-    // Fallback: rule-based
-    document.getElementById('eval-score-num').textContent = sc.total;
-    document.getElementById('eval-score-sub').textContent = 'Writing Score / 100 (structural)';
-    document.getElementById('eval-criteria').innerHTML =
-      '<div class="eval-crit"><div class="eval-crit-name">Word Count</div><div class="eval-crit-val">' + sc.wc + ' words · ' + sc.wcS + '/25</div></div>' +
-      '<div class="eval-crit"><div class="eval-crit-name">Sentence Variety</div><div class="eval-crit-val">' + sc.sentS + ' / 25</div></div>' +
-      '<div class="eval-crit"><div class="eval-crit-name">Lexical Diversity</div><div class="eval-crit-val">' + sc.lexS + ' / 25</div></div>' +
-      '<div class="eval-crit"><div class="eval-crit-name">Discourse Markers</div><div class="eval-crit-val">' + sc.hits + ' found · ' + sc.cohS + '/25</div></div>';
+    const estScore = Math.min(5, Math.round(sc.total / 20));
+    document.getElementById('eval-score-num').textContent = estScore + ' / 5';
+    document.getElementById('eval-score-sub').textContent = 'Estimated Score';
+    document.getElementById('eval-score-detail').textContent =
+      'MCQ: ' + mcqPts + '/25 · Essay: ' + essayPts + '/75 · Section: ' + secTotal + '%';
     document.getElementById('eval-ai-feedback-section').style.display = 'none';
     document.getElementById('eval-fallback-note').style.display = 'block';
   }
 
-  document.getElementById('eval-student-essay').innerHTML = highlightMarkers(S.writingText || '(No response submitted)');
-  const sampleKey = S.writingPrompt ? S.writingPrompt.sampleKey : 'glob';
-  document.getElementById('eval-sample-text').innerHTML = highlightMarkers(WRITING_SAMPLES[sampleKey] || WRITING_SAMPLES.glob);
   show('screen-writing-eval');
 }
 
@@ -1255,7 +1391,7 @@ function showResults() {
   const secCards = SECS.map((key, i) => {
     const p = ps[i], l = lvl(p), d = LVL_DISP[l];
     let sub;
-    if (i === 3) sub = 'M1: ' + S.m1Correct[i] + '/5 · Essay: ' + (S.writingScore || 0) + '%';
+    if (i === 3) sub = 'MCQ: ' + (S.m1Correct[3] * 5) + '/25 · Essay: ' + (S.writingScore || 0) + '/75';
     else sub = (S.m1Correct[i] + S.m2Correct[i]) + ' / 10 correct';
     return '<div class="src"><div class="src-top"><div class="src-left">' +
       '<div class="src-ico">' + SEC_ICON[key] + '</div>' +
