@@ -1,6 +1,8 @@
 # LEXIS · Adaptive English Proficiency Assessment
 
-A free, browser-based adaptive English test for learners preparing for **TOEFL**, **IELTS**, CET-4, or CET-6 — designed for post-Gaokao students starting their international exam journey.
+A free, browser-based adaptive English test for learners preparing for **TOEFL**, **IELTS**, **SAT**, CET-4, or CET-6 — designed for post-Gaokao students starting their international exam journey.
+
+**Created by 洛可薇Leachoy**
 
 **Live site:** https://uklins.github.io/english-test.github.io/
 
