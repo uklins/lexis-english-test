@@ -376,11 +376,11 @@ mark.mh{background:#F0C060;color:var(--ink);border-radius:3px;padding:0 2px}
       <div class="wi-header">
         <div style="font-size:1.6rem;margin-bottom:.3rem">📝</div>
         <div class="wi-title">Writing Section</div>
-        <div class="wi-sub">Section 4 of 4</div>
+        <div class="wi-sub" id="wi-sub-lbl">Section 4 of 4</div>
       </div>
       <div class="wi-section">
         <div class="wi-sec-title">Structure &amp; Scoring</div>
-        <div class="wi-row">
+        <div class="wi-row" id="wi-mcq-row">
           <div><div class="wi-part-name">Grammar &amp; Editing MCQ</div><div class="wi-part-detail">5 questions · 2:30 · 5 pts each</div></div>
           <div class="wi-pts">25 pts</div>
         </div>
@@ -1233,6 +1233,14 @@ function startWritingOnly() {
   S.secIdx = 3;
   S.module = 1;
   updatePips();
+  showWritingIntro();
+}
+
+function showWritingIntro() {
+  const mcqRow = document.getElementById('wi-mcq-row');
+  const subLbl = document.getElementById('wi-sub-lbl');
+  if (mcqRow) mcqRow.style.display = S.writingOnly ? 'none' : '';
+  if (subLbl) subLbl.textContent = S.writingOnly ? 'Essay Only' : 'Section 4 of 4';
   show('screen-writing-intro');
 }
 
@@ -1255,7 +1263,7 @@ function skipWritingSection() {
 
 function showSectionIntro() {
   updatePips();
-  if (S.secIdx === 3) { show('screen-writing-intro'); return; }
+  if (S.secIdx === 3) { showWritingIntro(); return; }
   const key = SECS[S.secIdx];
   const d = SEC_INTRO_DATA[key];
   const secNum = S.secIdx + 1;
