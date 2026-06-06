@@ -108,6 +108,8 @@ h1,h2,h3{font-family:'Cormorant Garamond',Georgia,serif;line-height:1.2}
 #essay-area:focus{outline:none;border-color:var(--accent)}
 .submit-essay-btn{padding:.9rem 2rem;background:var(--ink);color:#F5EFE6;border:none;border-radius:var(--r);font-family:'Sora',sans-serif;font-size:.88rem;font-weight:500;cursor:pointer;transition:all .2s}
 .submit-essay-btn:hover{background:var(--accent);transform:translateY(-1px)}
+.submit-essay-btn.over-limit{background:var(--border);color:var(--ink-muted);text-decoration:line-through;cursor:not-allowed;transform:none}
+.submit-essay-btn.over-limit:hover{background:var(--border);transform:none}
 
 /* WRITING EVAL */
 #screen-writing-eval{padding:3rem 1.5rem 4rem;align-items:center}
@@ -1393,7 +1395,7 @@ function showWritingTask() {
   document.getElementById('essay-area').value = '';
   document.getElementById('writing-wc').textContent = '0 words';
   const submitBtnInit = document.querySelector('.submit-essay-btn');
-  if (submitBtnInit) submitBtnInit.disabled = false;
+  if (submitBtnInit) { submitBtnInit.disabled = false; submitBtnInit.classList.remove('over-limit'); }
   essaySecs = 600;
   updateEssayTimer();
   updatePips();
@@ -1428,7 +1430,10 @@ function updateWC() {
   wcEl.style.color = over ? 'var(--error)' : '';
   wcEl.style.fontWeight = over ? '600' : '';
   const submitBtn = document.querySelector('.submit-essay-btn');
-  if (submitBtn) submitBtn.disabled = over;
+  if (submitBtn) {
+    submitBtn.disabled = over;
+    submitBtn.classList.toggle('over-limit', over);
+  }
 }
 
 function trySubmitEssay() {
