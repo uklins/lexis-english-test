@@ -400,7 +400,10 @@ mark.mh{background:#F0C060;color:var(--ink);border-radius:3px;padding:0 2px}
         <div class="wi-rubric-row"><span class="wi-rubric-dot">●</span><span>Grading takes approximately <strong>5–15 seconds</strong>. Do not close the page.</span></div>
         <div class="wi-rubric-row"><span class="wi-rubric-dot">●</span><span>Target length: <strong>100–180 words</strong> (TOEFL/IELTS/SAT) · <strong>≤ 150 words</strong> (CET).</span></div>
       </div>
-      <button class="cont-btn" onclick="startWritingSection()" style="width:100%;margin-top:1.4rem">Begin Writing Test →</button>
+      <div style="background:var(--accent-light);border:1px solid #F0C890;border-radius:8px;padding:.65rem .9rem;font-size:.78rem;color:var(--accent-dark);margin-top:1rem;line-height:1.6">
+        💡 Submitting the essay requires a <strong>submission code</strong> from your teacher. If you don't have one, use the skip link below.
+      </div>
+      <button class="cont-btn" onclick="startWritingSection()" style="width:100%;margin-top:1rem">Begin Writing Test →</button>
       <button class="skip-writing-link" onclick="confirmSkipWriting()">Skip Writing — I don't have a submission code</button>
     </div>
   </div>
@@ -471,7 +474,7 @@ mark.mh{background:#F0C060;color:var(--ink);border-radius:3px;padding:0 2px}
     </div>
     <div style="display:flex;align-items:center;gap:.6rem">
       <div class="q-counter">Writing · Essay Task</div>
-      <button class="skip-btn" onclick="trySkipWritingTask()">Skip</button>
+      <button class="skip-btn" id="skip-writing-task-btn" onclick="trySkipWritingTask()">Skip</button>
     </div>
   </header>
   <div class="writing-body">
@@ -490,7 +493,10 @@ mark.mh{background:#F0C060;color:var(--ink);border-radius:3px;padding:0 2px}
         <input type="text" id="essay-code" class="code-input" placeholder="Submission code" autocomplete="off">
         <span id="essay-code-err" class="code-err">Invalid code — please check with your teacher.</span>
       </div>
-      <button class="submit-essay-btn" onclick="trySubmitEssay()">Submit Essay →</button>
+      <div style="display:flex;align-items:center;gap:.75rem;flex-wrap:wrap">
+        <button class="submit-essay-btn" onclick="trySubmitEssay()">Submit Essay →</button>
+        <button class="skip-btn" id="skip-essay-inline-btn" onclick="trySkipFromEssay()" style="padding:.85rem 1.2rem;font-size:.8rem">Skip Writing</button>
+      </div>
     </div>
   </div>
 </div>
@@ -1144,9 +1150,23 @@ function skipModule() {
 }
 
 function trySkipWritingTask() {
-  showModal('Skip Writing Essay?',
-    'Skipping the essay ends the Writing section. Your Module 1 score is preserved. Confirm?',
-    skipWritingTask, true);
+  if (S.writingOnly) {
+    showModal('End Writing Test?',
+      'End the test without submitting your essay? Your essay will not be graded.',
+      skipWritingTask, false);
+  } else {
+    showModal('Skip Writing Essay?',
+      'Skipping the essay ends the Writing section. Your Module 1 score is preserved. Confirm?',
+      skipWritingTask, true);
+  }
+}
+
+function trySkipFromEssay() {
+  if (S.writingOnly) {
+    trySkipWritingTask();
+  } else {
+    confirmSkipWriting();
+  }
 }
 
 function skipWritingTask() {
@@ -1346,6 +1366,11 @@ function continueSection() {
 }
 
 function startWritingSection() {
+  if (S.writingOnly) {
+    S.module = 2;
+    showWritingTask();
+    return;
+  }
   loadModule();
   show('screen-test');
   updatePips();
@@ -1365,6 +1390,11 @@ function showWritingTask() {
   essaySecs = 600;
   updateEssayTimer();
   updatePips();
+  // Update skip/end labels based on mode
+  const headerSkipBtn = document.getElementById('skip-writing-task-btn');
+  if (headerSkipBtn) headerSkipBtn.textContent = S.writingOnly ? 'End Writing →' : 'Skip';
+  const inlineSkipBtn = document.getElementById('skip-essay-inline-btn');
+  if (inlineSkipBtn) inlineSkipBtn.textContent = S.writingOnly ? 'End Without Submitting' : 'Skip Writing';
   show('screen-writing-task');
   essayTimerInterval = setInterval(() => {
     essaySecs--;
@@ -1535,7 +1565,10 @@ function showResults() {
 
   // Determine overall and which bars to animate
   let overall, animIndices;
-  if (S.writingOnly) {
+  if (S.writingOnly && S.writingSkipped) {
+    overall = 0;
+    animIndices = [];
+  } else if (S.writingOnly) {
     overall = ps[3];
     animIndices = [3];
   } else if (S.writingSkipped) {
@@ -1587,11 +1620,13 @@ function showResults() {
       '<ul class="rec-steps">' + steps + '</ul></div>';
   }).join('');
 
-  const noticeBanner = S.writingSkipped
-    ? '<div class="result-notice warn">✏️ WRITING NOT TESTED — Overall score reflects Vocabulary, Grammar, and Reading only.</div>'
-    : S.writingOnly
-      ? '<div class="result-notice info">Writing-Only Session · Other sections were not assessed in this run.</div>'
-      : '';
+  const noticeBanner = (S.writingOnly && S.writingSkipped)
+    ? '<div class="result-notice warn">Essay not submitted — no score recorded for this session.</div>'
+    : S.writingSkipped
+      ? '<div class="result-notice warn">✏️ WRITING NOT TESTED — Overall score reflects Vocabulary, Grammar, and Reading only.</div>'
+      : S.writingOnly
+        ? '<div class="result-notice info">Writing-Only Session · Other sections were not assessed in this run.</div>'
+        : '';
 
   const hdrTitle = S.writingOnly ? 'Writing<br>Assessment' : 'Assessment<br>Complete';
   const hdrSub = S.writingOnly ? '写作能力诊断 · ' : '自适应能力诊断报告 · ';
