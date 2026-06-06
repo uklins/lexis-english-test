@@ -917,6 +917,9 @@ function lvl(p) { return p < 40 ? 0 : p < 65 ? 1 : p < 85 ? 2 : 3; }
 
 function sectionPct(i) {
   if (i === 3) {
+    if (S.writingOnly) {
+      return S.writingScore !== null ? Math.round((S.writingScore / 75) * 100) : 0;
+    }
     return (S.m1Correct[3] * 5) + (S.writingScore !== null ? S.writingScore : 0);
   }
   const total = S.m1Correct[i] + S.m2Correct[i];
@@ -1347,7 +1350,9 @@ function endSection() {
   document.getElementById('sec-title').textContent = SEC_NAME[key] + ' Complete';
   let sub;
   if (i === 3) {
-    sub = 'MCQ: ' + (S.m1Correct[3] * 5) + '/25 · Essay: ' + (S.writingScore || 0) + '/75';
+    sub = S.writingOnly
+      ? 'Essay: ' + (S.writingScore || 0) + '/75'
+      : 'MCQ: ' + (S.m1Correct[3] * 5) + '/25 · Essay: ' + (S.writingScore || 0) + '/75';
   } else {
     sub = (S.m1Correct[i] + S.m2Correct[i]) + ' / 10 correct · ' + (S.m2Hard[i] ? 'Advanced' : 'Foundation') + ' path';
   }
@@ -1519,14 +1524,16 @@ function showWritingEval(sc, ai, errMsg) {
   if (typeof sc !== 'object') sc = { total:0, wc:0, hits:0 };
   const mcqPts = S.m1Correct[3] * 5;
   const essayPts = S.writingScore || 0;
-  const secTotal = mcqPts + essayPts;
+  const secTotal = sectionPct(3);
+  const detailStr = S.writingOnly
+    ? 'Essay: ' + essayPts + '/75 · Section: ' + secTotal + '%'
+    : 'MCQ: ' + mcqPts + '/25 · Essay: ' + essayPts + '/75 · Section: ' + secTotal + '%';
 
   if (ai) {
     const intScore = Math.round(ai.score);
     document.getElementById('eval-score-num').textContent = intScore + ' / 5';
     document.getElementById('eval-score-sub').textContent = 'AI Writing Score';
-    document.getElementById('eval-score-detail').textContent =
-      'MCQ: ' + mcqPts + '/25 · Essay: ' + essayPts + '/75 · Section: ' + secTotal + '%';
+    document.getElementById('eval-score-detail').textContent = detailStr;
     document.getElementById('eval-ai-feedback').textContent = ai.feedback || '';
     document.getElementById('eval-ai-feedback-section').style.display = 'block';
     document.getElementById('eval-fallback-note').style.display = 'none';
@@ -1534,8 +1541,7 @@ function showWritingEval(sc, ai, errMsg) {
     const estScore = Math.min(5, Math.round(sc.total / 20));
     document.getElementById('eval-score-num').textContent = estScore + ' / 5';
     document.getElementById('eval-score-sub').textContent = 'Estimated Score';
-    document.getElementById('eval-score-detail').textContent =
-      'MCQ: ' + mcqPts + '/25 · Essay: ' + essayPts + '/75 · Section: ' + secTotal + '%';
+    document.getElementById('eval-score-detail').textContent = detailStr;
     document.getElementById('eval-ai-feedback-section').style.display = 'none';
     const note = document.getElementById('eval-fallback-note');
     note.textContent = 'AI grading unavailable' + (errMsg ? ' (' + errMsg + ')' : '') + ' — score estimated from structural analysis.';
@@ -1595,7 +1601,9 @@ function showResults() {
     }
     const p = ps[i], l = lvl(p), d = LVL_DISP[l];
     let sub;
-    if (i === 3) sub = 'MCQ: ' + (S.m1Correct[3] * 5) + '/25 · Essay: ' + (S.writingScore || 0) + '/75';
+    if (i === 3) sub = S.writingOnly
+      ? 'Essay: ' + (S.writingScore || 0) + '/75'
+      : 'MCQ: ' + (S.m1Correct[3] * 5) + '/25 · Essay: ' + (S.writingScore || 0) + '/75';
     else sub = (S.m1Correct[i] + S.m2Correct[i]) + ' / 10 correct';
     return '<div class="src"><div class="src-top"><div class="src-left">' +
       '<div class="src-ico">' + SEC_ICON[key] + '</div>' +
