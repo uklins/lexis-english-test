@@ -278,6 +278,16 @@ mark.mh{background:#F0C060;color:var(--ink);border-radius:3px;padding:0 2px}
 .wi-scale{font-size:.72rem;color:var(--ink-muted);margin-top:.55rem;padding:.4rem .7rem;background:var(--accent-light);border-radius:6px;text-align:center}
 .wi-rubric-row{display:flex;align-items:flex-start;gap:.5rem;font-size:.84rem;color:var(--ink-mid);line-height:1.55;padding:.2rem 0}
 .wi-rubric-dot{color:var(--accent);flex-shrink:0;margin-top:.15rem}
+/* WRITING-ONLY / SKIP-WRITING */
+.start-btn-writing{width:100%;padding:.75rem 2rem;background:transparent;color:var(--ink);border:1.5px solid var(--border);border-radius:var(--r);font-family:'Sora',sans-serif;font-size:.83rem;font-weight:500;letter-spacing:.05em;cursor:pointer;transition:all .25s;display:flex;align-items:center;justify-content:center;gap:.5rem;margin-top:.65rem}
+.start-btn-writing:hover{border-color:var(--accent);color:var(--accent)}
+.start-btn-writing:disabled{opacity:.35;cursor:not-allowed}
+.skip-writing-link{display:block;text-align:center;font-size:.78rem;color:var(--ink-muted);cursor:pointer;margin-top:.8rem;padding:.45rem;background:none;border:none;font-family:inherit;width:100%;transition:color .18s;text-decoration:underline;text-underline-offset:3px}
+.skip-writing-link:hover{color:var(--error)}
+.result-notice{border-radius:var(--r);padding:.75rem 1.1rem;font-size:.82rem;font-weight:500;margin-bottom:1.3rem;text-align:center}
+.result-notice.warn{background:var(--error-light);border:1px solid #F0B0B0;color:var(--error)}
+.result-notice.info{background:var(--accent-light);border:1px solid #F0C890;color:var(--accent-dark)}
+.src-not-tested{background:var(--border-light);border:1.5px dashed var(--border);border-radius:var(--r);padding:1.1rem 1.4rem;display:flex;align-items:center;gap:.75rem}
 </style>
 </head>
 <body>
@@ -310,6 +320,7 @@ mark.mh{background:#F0C060;color:var(--ink);border-radius:3px;padding:0 2px}
         <button class="exam-btn" data-exam="cet4" onclick="selectExam(this)"><span class="en">CET-4</span><span class="cn">四级</span></button>
       </div>
       <button class="start-btn" id="start-btn" onclick="startTest()" disabled>开始测试 &nbsp;→</button>
+      <button class="start-btn-writing" id="writing-only-btn" onclick="startWritingOnly()" disabled>✏️ Only Test Writing →</button>
       <p class="privacy-note">所有数据仅在本地浏览器运行，不上传、不存储</p>
       <p class="attribution">Created by 洛可薇Leachoy</p>
     </div>
@@ -390,6 +401,7 @@ mark.mh{background:#F0C060;color:var(--ink);border-radius:3px;padding:0 2px}
         <div class="wi-rubric-row"><span class="wi-rubric-dot">●</span><span>Target length: <strong>100–180 words</strong> (TOEFL/IELTS/SAT) · <strong>≤ 150 words</strong> (CET).</span></div>
       </div>
       <button class="cont-btn" onclick="startWritingSection()" style="width:100%;margin-top:1.4rem">Begin Writing Test →</button>
+      <button class="skip-writing-link" onclick="confirmSkipWriting()">Skip Writing — I don't have a submission code</button>
     </div>
   </div>
 </div>
@@ -507,6 +519,10 @@ mark.mh{background:#F0C060;color:var(--ink);border-radius:3px;padding:0 2px}
       </div>
       <div id="eval-fallback-note" class="fallback-note" style="display:none">
         AI grading was unavailable — score is estimated from structural analysis.
+      </div>
+      <div id="eval-essay-section" style="margin-bottom:1.4rem;display:none">
+        <div class="eval-section-title">Your Essay</div>
+        <div class="eval-essay-box" id="eval-essay-display"></div>
       </div>
       <div class="eval-section-title">Self-Check Rubric</div>
       <table class="rubric-table">
@@ -879,6 +895,7 @@ function initState() {
     m2Hard:[false,false,false,false],
     writingText:'', writingScore:null,
     writingPrompt:null,
+    writingOnly:false, writingSkipped:false,
     used:new Set(),
     moduleQs:[], userAnswers:[], qIdx:0, modSecs:0,
   };
@@ -1144,6 +1161,8 @@ function selectExam(btn) {
   btn.classList.add('selected');
   S.exam = btn.dataset.exam;
   document.getElementById('start-btn').disabled = false;
+  const wb = document.getElementById('writing-only-btn');
+  if (wb) wb.disabled = false;
 }
 
 // ─── SECTION INTRO DATA ──────────────────────────────────────
@@ -1178,6 +1197,35 @@ function beginTest() {
   S.secIdx = 0;
   S.module = 1;
   showSectionIntro();
+}
+
+function startWritingOnly() {
+  const exam = S.exam;
+  S = initState();
+  S.exam = exam;
+  S.examGroup = ['toefl','ielts','sat'].includes(exam) ? 'A' : 'B';
+  S.writingOnly = true;
+  S.secIdx = 3;
+  S.module = 1;
+  updatePips();
+  show('screen-writing-intro');
+}
+
+function confirmSkipWriting() {
+  showModal(
+    'Skip Writing Section?',
+    'Your overall score will be calculated from Vocabulary, Grammar, and Reading only. Writing will be marked "Not Tested." Continue?',
+    skipWritingSection,
+    false
+  );
+}
+
+function skipWritingSection() {
+  S.writingSkipped = true;
+  S.m1Correct[3] = 0;
+  S.m2Correct[3] = 0;
+  S.writingScore = null;
+  endSection();
 }
 
 function showSectionIntro() {
@@ -1262,9 +1310,20 @@ function startModule2() {
 function endSection() {
   const i = S.secIdx;
   const key = SECS[i];
+  document.getElementById('sec-icon').textContent = SEC_ICON[key];
+
+  if (i === 3 && S.writingSkipped) {
+    document.getElementById('sec-title').textContent = 'Writing — Not Tested';
+    document.getElementById('sec-sub').textContent = 'Writing section was skipped';
+    document.getElementById('sec-score').textContent = '—';
+    document.getElementById('sec-msg').textContent = 'Results will reflect your Vocabulary, Grammar, and Reading scores.';
+    document.getElementById('cont-btn').textContent = 'View My Results →';
+    show('screen-section-end');
+    return;
+  }
+
   const p = sectionPct(i);
   const msgs = ['保持住，每道题都是积累。Every step counts.','不错的开始！继续保持这种节奏。','相当扎实！你已经进入高手区间了。','出色！这个水平已经相当接近母语者了。'];
-  document.getElementById('sec-icon').textContent = SEC_ICON[key];
   document.getElementById('sec-title').textContent = SEC_NAME[key] + ' Complete';
   let sub;
   if (i === 3) {
@@ -1453,6 +1512,18 @@ function showWritingEval(sc, ai, errMsg) {
     note.style.display = 'block';
   }
 
+  // Show student essay
+  const essaySec = document.getElementById('eval-essay-section');
+  const essayDisp = document.getElementById('eval-essay-display');
+  if (essaySec && essayDisp) {
+    if (S.writingText && S.writingText.trim()) {
+      essayDisp.innerHTML = highlightMarkers(S.writingText);
+      essaySec.style.display = 'block';
+    } else {
+      essaySec.style.display = 'none';
+    }
+  }
+
   show('screen-writing-eval');
 }
 
@@ -1461,13 +1532,34 @@ function continueFromWriting() { endSection(); }
 // ─── RESULTS ─────────────────────────────────────────────────
 function showResults() {
   const ps = SECS.map((_, i) => sectionPct(i));
-  const overall = Math.round(ps.reduce((a, b) => a + b, 0) / 4);
+
+  // Determine overall and which bars to animate
+  let overall, animIndices;
+  if (S.writingOnly) {
+    overall = ps[3];
+    animIndices = [3];
+  } else if (S.writingSkipped) {
+    overall = Math.round((ps[0] + ps[1] + ps[2]) / 3);
+    animIndices = [0, 1, 2];
+  } else {
+    overall = Math.round(ps.reduce((a, b) => a + b, 0) / 4);
+    animIndices = [0, 1, 2, 3];
+  }
+
   const ol = lvl(overall);
   const ld = LVL_DISP[ol];
   const et = EXAM_TIPS[S.exam] || EXAM_TIPS.ielts;
   const R = 42, C = 2 * Math.PI * R;
 
   const secCards = SECS.map((key, i) => {
+    if (S.writingOnly && i !== 3) return '';
+    if (S.writingSkipped && i === 3) {
+      return '<div class="src-not-tested">' +
+        '<div class="src-ico">📝</div>' +
+        '<div><div class="src-name">Writing</div>' +
+        '<div class="src-sub" style="color:var(--error);font-weight:600;font-size:.72rem;letter-spacing:.06em;text-transform:uppercase">NOT TESTED</div></div>' +
+        '</div>';
+    }
     const p = ps[i], l = lvl(p), d = LVL_DISP[l];
     let sub;
     if (i === 3) sub = 'MCQ: ' + (S.m1Correct[3] * 5) + '/25 · Essay: ' + (S.writingScore || 0) + '/75';
@@ -1483,6 +1575,8 @@ function showResults() {
   }).join('');
 
   const recCards = SECS.map((key, i) => {
+    if (S.writingOnly && i !== 3) return '';
+    if (S.writingSkipped && i === 3) return '';
     const lv = LVL_MAP[lvl(ps[i])], rec = RECS[key][lv], d = LVL_DISP[lvl(ps[i])];
     const steps = rec.steps.map(s => '<li class="rec-step">' + s + '</li>').join('');
     return '<div class="rec-card"><div class="rec-card-top">' +
@@ -1493,9 +1587,20 @@ function showResults() {
       '<ul class="rec-steps">' + steps + '</ul></div>';
   }).join('');
 
+  const noticeBanner = S.writingSkipped
+    ? '<div class="result-notice warn">✏️ WRITING NOT TESTED — Overall score reflects Vocabulary, Grammar, and Reading only.</div>'
+    : S.writingOnly
+      ? '<div class="result-notice info">Writing-Only Session · Other sections were not assessed in this run.</div>'
+      : '';
+
+  const hdrTitle = S.writingOnly ? 'Writing<br>Assessment' : 'Assessment<br>Complete';
+  const hdrSub = S.writingOnly ? '写作能力诊断 · ' : '自适应能力诊断报告 · ';
+  const overallLabel = S.writingSkipped ? '% (3 sections)' : '% overall';
+
   document.getElementById('res-wrap').innerHTML =
-    '<div class="res-hdr"><h1>Assessment<br>Complete</h1>' +
-    '<p>自适应能力诊断报告 · ' + new Date().toLocaleDateString('zh-CN') + '</p></div>' +
+    '<div class="res-hdr"><h1>' + hdrTitle + '</h1>' +
+    '<p>' + hdrSub + new Date().toLocaleDateString('zh-CN') + '</p></div>' +
+    noticeBanner +
     '<div class="overall-card"><div class="ov-left"><h2>OVERALL PROFICIENCY</h2>' +
     '<div class="ov-level">' + ld.en + '<br><span>' + ld.cn + '</span></div>' +
     '<p class="ov-desc">' + ld.desc + '</p></div>' +
@@ -1505,7 +1610,7 @@ function showResults() {
     ' cx="50" cy="50" r="' + R + '" stroke-dasharray="' + C + '" stroke-dashoffset="' + C + '"' +
     ' style="transform:rotate(-90deg);transform-origin:50% 50%;transition:stroke-dashoffset 1.2s cubic-bezier(.4,0,.2,1)"/>' +
     '</svg><div class="ring-text"><div class="score-ring-num" id="snum">0</div>' +
-    '<div class="score-ring-pct">% overall</div></div></div></div>' +
+    '<div class="score-ring-pct">' + overallLabel + '</div></div></div></div>' +
     '<div class="secs-grid">' + secCards + '</div>' +
     '<div class="rec-section"><div class="rec-hdr">学习建议 · Learning Path</div>' +
     recCards +
@@ -1516,7 +1621,10 @@ function showResults() {
 
   show('screen-results');
   setTimeout(() => {
-    ps.forEach((_, i) => { document.getElementById('bar' + i).style.width = ps[i] + '%'; });
+    animIndices.forEach(i => {
+      const el = document.getElementById('bar' + i);
+      if (el) el.style.width = ps[i] + '%';
+    });
     const c = document.getElementById('svgc');
     if (c) c.setAttribute('stroke-dashoffset', String(C * (1 - overall / 100)));
     let n = 0;
