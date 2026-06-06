@@ -1377,13 +1377,18 @@ async function doSubmitEssay(auto) {
       }, 1000);
       return;
     }
-    if (!res.ok) throw new Error('HTTP ' + res.status);
+    if (!res.ok) {
+      const errBody = await res.text().catch(() => '');
+      throw new Error('HTTP ' + res.status + (errBody ? ' — ' + errBody : ''));
+    }
     const ai = await res.json();
+    if (typeof ai.score !== 'number') throw new Error('Bad response: ' + JSON.stringify(ai));
     S.writingScore = Math.round(ai.score) * 15;
     showWritingEval(localSc, ai);
   } catch (e) {
+    console.error('[LEXIS grading]', e.message);
     S.writingScore = Math.min(5, Math.round(localSc.total / 20)) * 15;
-    showWritingEval(localSc, null);
+    showWritingEval(localSc, null, e.message);
   }
 }
 
@@ -1421,7 +1426,7 @@ function highlightMarkers(text) {
   return html.replace(/\n/g, '<br>');
 }
 
-function showWritingEval(sc, ai) {
+function showWritingEval(sc, ai, errMsg) {
   if (typeof sc !== 'object') sc = { total:0, wc:0, hits:0 };
   const mcqPts = S.m1Correct[3] * 5;
   const essayPts = S.writingScore || 0;
@@ -1443,7 +1448,9 @@ function showWritingEval(sc, ai) {
     document.getElementById('eval-score-detail').textContent =
       'MCQ: ' + mcqPts + '/25 · Essay: ' + essayPts + '/75 · Section: ' + secTotal + '%';
     document.getElementById('eval-ai-feedback-section').style.display = 'none';
-    document.getElementById('eval-fallback-note').style.display = 'block';
+    const note = document.getElementById('eval-fallback-note');
+    note.textContent = 'AI grading unavailable' + (errMsg ? ' (' + errMsg + ')' : '') + ' — score estimated from structural analysis.';
+    note.style.display = 'block';
   }
 
   show('screen-writing-eval');
