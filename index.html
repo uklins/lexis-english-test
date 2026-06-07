@@ -352,6 +352,7 @@ mark.mh{background:#F0C060;color:var(--ink);border-radius:3px;padding:0 2px}
     <input type="text" id="locked-code" class="code-input" placeholder="Submission code" autocomplete="off" style="width:100%;display:block;margin-bottom:.5rem">
     <div id="locked-code-err" class="code-err" style="display:none;margin-bottom:.6rem"></div>
     <button class="cont-btn" onclick="retryLockedEssay()" style="width:100%">Submit for Grading →</button>
+    <button onclick="skipGrading()" class="skip-btn" style="width:100%;margin-top:.6rem;padding:.65rem;font-size:.78rem;text-align:center">Skip Grading</button>
   </div>
 </div>
 
@@ -1586,6 +1587,11 @@ async function retryLockedEssay() {
     console.error('[LEXIS grading retry]', e.message);
     showEssayLocked('unavailable', code);
   }
+}
+
+function skipGrading() {
+  document.getElementById('modal-essay-locked').style.display = 'none';
+  skipWritingTask();
 }
 
 function scoreEssay(text) {
