@@ -512,6 +512,7 @@ mark.mh{background:#F0C060;color:var(--ink);border-radius:3px;padding:0 2px}
       <div style="display:flex;align-items:center;gap:.75rem;flex-wrap:wrap">
         <button class="submit-essay-btn" onclick="trySubmitEssay()">Submit Essay →</button>
         <button class="skip-btn" id="skip-essay-inline-btn" onclick="trySkipFromEssay()" style="padding:.85rem 1.2rem;font-size:.8rem">Skip Writing</button>
+        <button class="skip-btn" id="reduce-timer-btn" onclick="reduceTimer()" style="display:none;padding:.85rem 1.2rem;font-size:.8rem">−1 Minute</button>
       </div>
     </div>
   </div>
@@ -1429,6 +1430,8 @@ function showWritingTask() {
   if (headerSkipBtn) headerSkipBtn.textContent = S.writingOnly ? 'End Writing →' : 'Skip';
   const inlineSkipBtn = document.getElementById('skip-essay-inline-btn');
   if (inlineSkipBtn) inlineSkipBtn.textContent = S.writingOnly ? 'End Without Submitting' : 'Skip Writing';
+  const reduceBtn = document.getElementById('reduce-timer-btn');
+  if (reduceBtn) reduceBtn.style.display = S.writingOnly ? '' : 'none';
   show('screen-writing-task');
   essayTimerInterval = setInterval(() => {
     essaySecs--;
@@ -1444,6 +1447,12 @@ function updateEssayTimer() {
   const s = essaySecs % 60;
   el.textContent = m + ':' + String(s).padStart(2, '0');
   el.className = 'writing-timer' + (essaySecs <= 60 ? ' urgent' : '');
+}
+
+function reduceTimer() {
+  essaySecs = Math.max(0, essaySecs - 60);
+  updateEssayTimer();
+  if (essaySecs <= 0) { clearInterval(essayTimerInterval); doSubmitEssay(true); }
 }
 
 function updateWC() {
