@@ -185,8 +185,6 @@ mark.mh{background:#F0C060;color:var(--ink);border-radius:3px;padding:0 2px}
 .print-btn{padding:.85rem 1.8rem;background:var(--ink);color:#F5EFE6;border:none;border-radius:var(--r);font-family:'Sora',sans-serif;font-size:.83rem;font-weight:500;cursor:pointer;transition:all .2s;letter-spacing:.04em}
 .print-btn:hover{background:var(--accent)}
 .res-actions{display:flex;gap:.75rem;flex-wrap:wrap;justify-content:center;margin-top:2rem}
-.restore-btn{width:100%;margin-top:.6rem;padding:.7rem 1rem;background:var(--success-light);border:1.5px solid #A8D5BC;color:var(--success);border-radius:var(--r);font-family:'Sora',sans-serif;font-size:.82rem;font-weight:500;cursor:pointer;text-align:left;display:none}
-.restore-btn:hover{background:#D0EEDC}
 @media print{
   .screen{display:none!important}
   #screen-results{display:block!important;padding:1rem}
@@ -338,7 +336,6 @@ mark.mh{background:#F0C060;color:var(--ink);border-radius:3px;padding:0 2px}
       </div>
       <button class="start-btn" id="start-btn" onclick="startTest()" disabled>开始测试 &nbsp;→</button>
       <button class="start-btn-writing" id="writing-only-btn" onclick="startWritingOnly()" disabled>✏️ Only Test Writing →</button>
-      <button class="restore-btn" id="restore-btn" onclick="restoreSavedResults()"></button>
       <p class="privacy-note">© Leachoy · Project Dawnbreak. Free to use for personal and educational purposes. Unauthorized redistribution of any substantial part of this page or its subpages is not permitted.</p>
     </div>
   </div>
@@ -776,16 +773,16 @@ const QB_B = {
 // ─── WRITING POOL & SAMPLES ───────────────────────────────────
 const WRITING_POOL = {
   toefl:[
-    {text:'Some people believe that globalization has brought more benefits than problems to modern society. Others argue the opposite. Write an argumentative essay stating and defending your position with clear reasoning and specific examples.',target:'Target: 120–180 words',sampleKey:'glob'},
+    {text:'Some people believe that globalization has brought more benefits than problems to modern society. Others argue the opposite. Write an argumentative essay stating and defending your position with clear reasoning.',target:'Target: 120–180 words',sampleKey:'glob'},
     {text:'Some people argue that university education should be entirely funded by the government and free for all students. Others believe students should bear the cost themselves. Write an argumentative essay presenting and defending your position.',target:'Target: 120–180 words',sampleKey:'uni'},
-    {text:'Social media platforms have transformed how people communicate and share information. Do you believe the benefits of social media outweigh its drawbacks? Write an argumentative essay supporting your position with specific reasoning and examples.',target:'Target: 120–180 words',sampleKey:'social'},
+    {text:'Social media platforms have transformed how people communicate and share information. Do you believe the benefits of social media outweigh its drawbacks? Write an argumentative essay supporting your position with clear reasoning.',target:'Target: 120–180 words',sampleKey:'social'},
     {text:'Some argue that technological innovation is the most effective solution to climate change. Others believe changing individual behavior and consumption habits is more important. Write an argumentative essay presenting your position.',target:'Target: 120–180 words',sampleKey:'tech'},
     {text:'The rise of remote work has permanently changed workplace culture in many industries. Do you believe remote work is preferable to a traditional office environment? Write an argumentative essay defending your position with clear reasoning.',target:'Target: 120–180 words',sampleKey:'remote'},
   ],
   ielts:[
-    {text:'Some people believe that globalization has brought more benefits than problems to modern society. Others argue the opposite. Write an argumentative essay stating and defending your position with clear reasoning and specific examples.',target:'Target: 120–180 words',sampleKey:'glob'},
+    {text:'Some people believe that globalization has brought more benefits than problems to modern society. Others argue the opposite. Write an argumentative essay stating and defending your position with clear reasoning.',target:'Target: 120–180 words',sampleKey:'glob'},
     {text:'Some people argue that university education should be entirely funded by the government and free for all students. Others believe students should bear the cost themselves. Write an argumentative essay presenting and defending your position.',target:'Target: 120–180 words',sampleKey:'uni'},
-    {text:'Social media platforms have transformed how people communicate and share information. Do you believe the benefits of social media outweigh its drawbacks? Write an argumentative essay supporting your position with specific reasoning and examples.',target:'Target: 120–180 words',sampleKey:'social'},
+    {text:'Social media platforms have transformed how people communicate and share information. Do you believe the benefits of social media outweigh its drawbacks? Write an argumentative essay supporting your position with clear reasoning.',target:'Target: 120–180 words',sampleKey:'social'},
     {text:'Some argue that technological innovation is the most effective solution to climate change. Others believe changing individual behavior and consumption habits is more important. Write an argumentative essay presenting your position.',target:'Target: 120–180 words',sampleKey:'tech'},
     {text:'The rise of remote work has permanently changed workplace culture in many industries. Do you believe remote work is preferable to a traditional office environment? Write an argumentative essay defending your position with clear reasoning.',target:'Target: 120–180 words',sampleKey:'remote'},
   ],
@@ -796,7 +793,7 @@ const WRITING_POOL = {
     {text:'Campus life today is heavily influenced by digital technology. Write a short essay discussing the benefits and drawbacks of this influence on students\' academic and social development.',target:'Target: ≤ 150 words',sampleKey:'cet6'},
   ],
   cet4:[
-    {text:'Do you prefer studying alone or studying in a group? State your preference and give two or three reasons to support your answer.',target:'Target: ≤ 150 words',sampleKey:'cet4'},
+    {text:'Do you prefer studying alone or studying in a group? State your preference and support it with clear reasoning.',target:'Target: ≤ 150 words',sampleKey:'cet4'},
   ],
 };
 
@@ -1798,7 +1795,6 @@ function showResults() {
     '<div style="height:2rem"></div>';
 
   show('screen-results');
-  saveResults();
   setTimeout(() => {
     animIndices.forEach(i => {
       const el = document.getElementById('bar' + i);
@@ -1823,49 +1819,10 @@ function retake() {
   document.querySelectorAll('.exam-btn').forEach(b => b.classList.remove('selected'));
   document.getElementById('start-btn').disabled = true;
   document.getElementById('writing-only-btn').disabled = true;
-  checkSavedResults();
   show('screen-intro');
 }
 
-function saveResults() {
-  const snapshot = {
-    exam: S.exam, examGroup: S.examGroup,
-    m1Correct: [...S.m1Correct], m2Correct: [...S.m2Correct], m2Hard: [...S.m2Hard],
-    writingScore: S.writingScore, writingText: S.writingText,
-    writingOnly: S.writingOnly, writingSkipped: S.writingSkipped,
-    savedAt: Date.now()
-  };
-  try { localStorage.setItem('lexis_results', JSON.stringify(snapshot)); } catch(e) {}
-}
-
-function restoreSavedResults() {
-  try {
-    const snap = JSON.parse(localStorage.getItem('lexis_results'));
-    if (!snap) return;
-    S = initState();
-    S.exam = snap.exam; S.examGroup = snap.examGroup;
-    S.m1Correct = snap.m1Correct; S.m2Correct = snap.m2Correct; S.m2Hard = snap.m2Hard;
-    S.writingScore = snap.writingScore; S.writingText = snap.writingText;
-    S.writingOnly = snap.writingOnly; S.writingSkipped = snap.writingSkipped;
-    showResults();
-  } catch(e) {}
-}
-
-function checkSavedResults() {
-  const btn = document.getElementById('restore-btn');
-  if (!btn) return;
-  try {
-    const raw = localStorage.getItem('lexis_results');
-    if (!raw) { btn.style.display = 'none'; return; }
-    const snap = JSON.parse(raw);
-    const d = new Date(snap.savedAt).toLocaleDateString();
-    btn.style.display = 'block';
-    btn.textContent = '📋 View Previous Results  (' + d + ') →';
-  } catch(e) { btn.style.display = 'none'; }
-}
-
 S = initState();
-checkSavedResults();
 </script>
 </body>
 </html>
