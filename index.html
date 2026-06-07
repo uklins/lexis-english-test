@@ -1532,9 +1532,9 @@ async function doSubmitEssay(auto) {
 
 function showEssayLocked(reason, usedCode) {
   const msgs = {
-    timeout:      'Time is up. Your essay has been saved but not yet graded — the timer expired before a submission code was entered. Enter your code below to submit for grading.',
-    invalid_code: 'The submission code you entered is invalid. Please check with your teacher and try again.',
-    unavailable:  'AI grading is currently unavailable (network or server error). Your essay is saved. Enter your submission code and try again — the connection may recover shortly.',
+    timeout:      'Your essay is saved. A submission code was not submitted or not correctly entered. Enter your code below to submit for grading.',
+    invalid_code: 'Your essay is saved. A submission code was not submitted or not correctly entered. Check with your teacher and try again.',
+    unavailable:  'Your essay is saved. A submission code was not submitted or not correctly entered, or grading is temporarily unavailable. Enter your code below to try again.',
   };
   document.getElementById('locked-msg').textContent = msgs[reason] || msgs.unavailable;
   document.getElementById('locked-essay-preview').textContent = S.writingText || '(no essay text)';
