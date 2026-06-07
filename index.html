@@ -1460,9 +1460,18 @@ function reduceTimer() {
 function updateWC() {
   const text = document.getElementById('essay-area').value;
   const wc = text.trim() ? text.trim().split(/\s+/).length : 0;
-  const over = wc > 200;
+  const cc = text.length;
+  const overWords = wc > 200;
+  const overChars = cc > 1200;
+  const over = overWords || overChars;
   const wcEl = document.getElementById('writing-wc');
-  wcEl.textContent = wc + ' words' + (over ? ' — unable to submit' : '');
+  if (overChars) {
+    wcEl.textContent = cc + ' characters — unable to submit';
+  } else if (overWords) {
+    wcEl.textContent = wc + ' words — unable to submit';
+  } else {
+    wcEl.textContent = wc + ' words';
+  }
   wcEl.style.color = over ? 'var(--error)' : '';
   wcEl.style.fontWeight = over ? '600' : '';
   const submitBtn = document.querySelector('.submit-essay-btn');
@@ -1475,7 +1484,7 @@ function updateWC() {
 function trySubmitEssay() {
   const rawText = document.getElementById('essay-area').value.trim();
   const wc = rawText ? rawText.split(/\s+/).length : 0;
-  if (wc > 200) return;
+  if (wc > 200 || document.getElementById('essay-area').value.length > 1200) return;
   const code = document.getElementById('essay-code').value.trim();
   const errEl = document.getElementById('essay-code-err');
   if (!code) {
