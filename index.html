@@ -423,10 +423,15 @@ mark.mh{background:#F0C060;color:var(--ink);border-radius:3px;padding:0 2px}
         <div class="wi-scale">Essay scale: 0 · 15 · 30 · 45 · 60 · 75</div>
       </div>
       <div class="wi-section">
-        <div class="wi-sec-title">Essay Rubric</div>
-        <div class="wi-rubric-row"><span class="wi-rubric-dot">●</span><span><strong>Clear Position</strong> — state a specific, arguable stance. An observation is not a position.</span></div>
-        <div class="wi-rubric-row"><span class="wi-rubric-dot">●</span><span><strong>Developed Argument</strong> — at least one traceable chain: premise → reasoning → consequence. Examples are optional; if used, they must support the chain, not replace it.</span></div>
-        <div class="wi-rubric-row"><span class="wi-rubric-dot">●</span><span><strong>Language Quality</strong> — errors should not impede meaning. Some sentence choices should be specific to your argument, not generic templates.</span></div>
+        <div class="wi-sec-title">Scoring Scale</div>
+        <div style="display:flex;flex-direction:column;gap:.3rem;font-size:.82rem">
+          <div style="display:flex;gap:.7rem"><span style="font-weight:700;min-width:1.4rem;color:var(--ink)">5</span><span style="color:var(--ink-mid)">Clear position; compelling, well-developed argument; fluent and accurate language throughout</span></div>
+          <div style="display:flex;gap:.7rem"><span style="font-weight:700;min-width:1.4rem;color:var(--ink)">4</span><span style="color:var(--ink-mid)">Clear position; solid argument with traceable reasoning; mostly accurate, minor errors</span></div>
+          <div style="display:flex;gap:.7rem"><span style="font-weight:700;min-width:1.4rem;color:var(--ink)">3</span><span style="color:var(--ink-mid)">Position stated; at least one supporting point with some reasoning; occasional noticeable errors</span></div>
+          <div style="display:flex;gap:.7rem"><span style="font-weight:700;min-width:1.4rem;color:var(--ink)">2</span><span style="color:var(--ink-mid)">Weak or vague position; limited development; frequent errors that impede meaning</span></div>
+          <div style="display:flex;gap:.7rem"><span style="font-weight:700;min-width:1.4rem;color:var(--ink)">1</span><span style="color:var(--ink-mid)">Bare thesis only; no supporting argument; significant language problems</span></div>
+          <div style="display:flex;gap:.7rem"><span style="font-weight:700;min-width:1.4rem;color:var(--ink)">0</span><span style="color:var(--ink-mid)">Off-topic, blank, or incomprehensible</span></div>
+        </div>
       </div>
       <div class="wi-section">
         <div class="wi-sec-title">Submission</div>
@@ -516,6 +521,7 @@ mark.mh{background:#F0C060;color:var(--ink);border-radius:3px;padding:0 2px}
       <div class="writing-prompt-box">
         <div class="writing-prompt-label">Essay Prompt</div>
         <div class="writing-prompt-text" id="writing-prompt-text"></div>
+        <div style="margin-top:.7rem;font-size:.8rem;color:var(--ink-mid);line-height:1.65;border-top:1px solid var(--border-light);padding-top:.65rem">Express your opinion. Support your opinion with logical reasoning — examples are optional. Write clearly with appropriate grammar and punctuation.</div>
         <div class="writing-prompt-target" id="writing-prompt-target"></div>
       </div>
       <div class="writing-meta-bar">
@@ -773,27 +779,27 @@ const QB_B = {
 // ─── WRITING POOL & SAMPLES ───────────────────────────────────
 const WRITING_POOL = {
   toefl:[
-    {text:'Some people believe that globalization has brought more benefits than problems to modern society. Others argue the opposite. Write an argumentative essay stating and defending your position with clear reasoning.',target:'Target: 120–180 words',sampleKey:'glob'},
-    {text:'Some people argue that university education should be entirely funded by the government and free for all students. Others believe students should bear the cost themselves. Write an argumentative essay presenting and defending your position.',target:'Target: 120–180 words',sampleKey:'uni'},
-    {text:'Social media platforms have transformed how people communicate and share information. Do you believe the benefits of social media outweigh its drawbacks? Write an argumentative essay supporting your position with clear reasoning.',target:'Target: 120–180 words',sampleKey:'social'},
-    {text:'Some argue that technological innovation is the most effective solution to climate change. Others believe changing individual behavior and consumption habits is more important. Write an argumentative essay presenting your position.',target:'Target: 120–180 words',sampleKey:'tech'},
-    {text:'The rise of remote work has permanently changed workplace culture in many industries. Do you believe remote work is preferable to a traditional office environment? Write an argumentative essay defending your position with clear reasoning.',target:'Target: 120–180 words',sampleKey:'remote'},
+    {text:'Some people believe that globalization has brought more benefits than problems to modern society. Others argue the opposite.',target:'Target: 120–180 words',sampleKey:'glob'},
+    {text:'Some people argue that university education should be entirely funded by the government and free for all students. Others believe students should bear the cost themselves.',target:'Target: 120–180 words',sampleKey:'uni'},
+    {text:'Social media platforms have transformed how people communicate and share information. Do you believe the benefits of social media outweigh its drawbacks?',target:'Target: 120–180 words',sampleKey:'social'},
+    {text:'Some argue that technological innovation is the most effective solution to climate change. Others believe changing individual behavior and consumption habits is more important.',target:'Target: 120–180 words',sampleKey:'tech'},
+    {text:'The rise of remote work has permanently changed workplace culture in many industries. Do you believe remote work is preferable to a traditional office environment?',target:'Target: 120–180 words',sampleKey:'remote'},
   ],
   ielts:[
-    {text:'Some people believe that globalization has brought more benefits than problems to modern society. Others argue the opposite. Write an argumentative essay stating and defending your position with clear reasoning.',target:'Target: 120–180 words',sampleKey:'glob'},
-    {text:'Some people argue that university education should be entirely funded by the government and free for all students. Others believe students should bear the cost themselves. Write an argumentative essay presenting and defending your position.',target:'Target: 120–180 words',sampleKey:'uni'},
-    {text:'Social media platforms have transformed how people communicate and share information. Do you believe the benefits of social media outweigh its drawbacks? Write an argumentative essay supporting your position with clear reasoning.',target:'Target: 120–180 words',sampleKey:'social'},
-    {text:'Some argue that technological innovation is the most effective solution to climate change. Others believe changing individual behavior and consumption habits is more important. Write an argumentative essay presenting your position.',target:'Target: 120–180 words',sampleKey:'tech'},
-    {text:'The rise of remote work has permanently changed workplace culture in many industries. Do you believe remote work is preferable to a traditional office environment? Write an argumentative essay defending your position with clear reasoning.',target:'Target: 120–180 words',sampleKey:'remote'},
+    {text:'Some people believe that globalization has brought more benefits than problems to modern society. Others argue the opposite.',target:'Target: 120–180 words',sampleKey:'glob'},
+    {text:'Some people argue that university education should be entirely funded by the government and free for all students. Others believe students should bear the cost themselves.',target:'Target: 120–180 words',sampleKey:'uni'},
+    {text:'Social media platforms have transformed how people communicate and share information. Do you believe the benefits of social media outweigh its drawbacks?',target:'Target: 120–180 words',sampleKey:'social'},
+    {text:'Some argue that technological innovation is the most effective solution to climate change. Others believe changing individual behavior and consumption habits is more important.',target:'Target: 120–180 words',sampleKey:'tech'},
+    {text:'The rise of remote work has permanently changed workplace culture in many industries. Do you believe remote work is preferable to a traditional office environment?',target:'Target: 120–180 words',sampleKey:'remote'},
   ],
   sat:[
-    {text:'Some argue that artificial intelligence will ultimately benefit society by improving efficiency and solving complex problems. Others warn that AI poses significant risks to employment, privacy, and human autonomy. Write an analytical essay arguing your position with clear reasoning.',target:'Target: 150–200 words',sampleKey:'sat'},
+    {text:'Some argue that artificial intelligence will ultimately benefit society by improving efficiency and solving complex problems. Others warn that AI poses significant risks to employment, privacy, and human autonomy.',target:'Target: 150–200 words',sampleKey:'sat'},
   ],
   cet6:[
-    {text:'Campus life today is heavily influenced by digital technology. Write a short essay discussing the benefits and drawbacks of this influence on students\' academic and social development.',target:'Target: ≤ 150 words',sampleKey:'cet6'},
+    {text:'Campus life today is heavily influenced by digital technology. Is this influence on students\' academic and social development largely positive or negative?',target:'Target: ≤ 150 words',sampleKey:'cet6'},
   ],
   cet4:[
-    {text:'Do you prefer studying alone or studying in a group? State your preference and support it with clear reasoning.',target:'Target: ≤ 150 words',sampleKey:'cet4'},
+    {text:'Do you prefer studying alone or studying in a group?',target:'Target: ≤ 150 words',sampleKey:'cet4'},
   ],
 };
 
