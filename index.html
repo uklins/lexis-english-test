@@ -1536,6 +1536,8 @@ function showEssayLocked(reason, usedCode) {
     if (prevCode) codeInput.value = prevCode.value.trim();
   }
   document.getElementById('locked-code-err').style.display = 'none';
+  // Return to writing task screen so loading spinner isn't shown behind the modal
+  show('screen-writing-task');
   document.getElementById('modal-essay-locked').style.display = 'flex';
 }
 
@@ -1620,24 +1622,19 @@ function showWritingEval(sc, ai, errMsg) {
     ? 'Essay: ' + essayPts + '/75 · Section: ' + secTotal + '%'
     : 'MCQ: ' + mcqPts + '/25 · Essay: ' + essayPts + '/75 · Section: ' + secTotal + '%';
 
-  if (ai) {
-    const intScore = Math.round(ai.score);
-    document.getElementById('eval-score-num').textContent = intScore + ' / 5';
-    document.getElementById('eval-score-sub').textContent = 'AI Writing Score';
-    document.getElementById('eval-score-detail').textContent = detailStr;
-    document.getElementById('eval-ai-feedback').textContent = ai.feedback || '';
-    document.getElementById('eval-ai-feedback-section').style.display = 'block';
-    document.getElementById('eval-fallback-note').style.display = 'none';
-  } else {
-    const estScore = Math.min(5, Math.round(sc.total / 20));
-    document.getElementById('eval-score-num').textContent = estScore + ' / 5';
-    document.getElementById('eval-score-sub').textContent = 'Estimated Score';
-    document.getElementById('eval-score-detail').textContent = detailStr;
-    document.getElementById('eval-ai-feedback-section').style.display = 'none';
-    const note = document.getElementById('eval-fallback-note');
-    note.textContent = 'AI grading unavailable' + (errMsg ? ' (' + errMsg + ')' : '') + ' — score estimated from structural analysis.';
-    note.style.display = 'block';
+  if (!ai) {
+    // No local fallback — require AI grading
+    showEssayLocked('unavailable');
+    return;
   }
+  const intScore = Math.round(ai.score);
+  document.getElementById('eval-score-num').textContent = intScore + ' / 5';
+  document.getElementById('eval-score-sub').textContent = 'AI Writing Score';
+  document.getElementById('eval-score-detail').textContent = detailStr;
+  document.getElementById('eval-ai-feedback').textContent = ai.feedback || '';
+  document.getElementById('eval-ai-feedback-section').style.display = 'block';
+  const note = document.getElementById('eval-fallback-note');
+  if (note) note.style.display = 'none';
 
   // Show student essay
   const essaySec = document.getElementById('eval-essay-section');
