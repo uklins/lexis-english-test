@@ -778,30 +778,31 @@ const QB_B = {
 };
 
 // ─── WRITING POOL & SAMPLES ───────────────────────────────────
+const _ACAD = [
+  {text:'Economic globalization has brought countries closer together through trade, migration, and shared technology. Supporters say this has raised living standards and created new opportunities for people in developing nations. Critics argue it has destroyed local industries, lowered wages for many workers, and allowed corporations to avoid accountability. Which do you think has been the greater effect of globalization — its benefits or its costs? Why?', target:'Target: 120–180 words', sampleKey:'glob'},
+  {text:'In countries like Germany and Norway, university education is publicly funded and free to attend. In others, such as the United States, students often graduate with tens of thousands of dollars in debt. Advocates of free tuition argue that education is a public good that should be equally accessible to everyone. Opponents say that free university education misuses government resources and reduces institutional quality. Do you think governments should fully fund university education for all students? Why or why not?', target:'Target: 120–180 words', sampleKey:'uni'},
+  {text:'Platforms like Instagram, TikTok, and Twitter have allowed people to connect, organize, and share information at a scale never seen before. They have supported social movements and helped people maintain relationships across distances. At the same time, research links heavy social media use to rising rates of anxiety, misinformation, and political polarization. Do you think the benefits of social media outweigh its drawbacks, or is the harm greater? Why?', target:'Target: 120–180 words', sampleKey:'social'},
+  {text:'Scientists agree that both technological solutions — such as renewable energy and electric vehicles — and changes in individual behavior — such as reducing meat consumption and air travel — are needed to address climate change. Some argue that technological innovation alone can solve the problem without requiring people to significantly alter their lifestyles. Others believe that technology is not enough unless people are also willing to change how they live. Which approach do you think should be prioritized? Why?', target:'Target: 120–180 words', sampleKey:'tech'},
+  {text:'During the COVID-19 pandemic, many companies shifted to remote work and found that productivity was maintained or even improved. Since then, some organizations have required employees to return to the office, arguing that in-person collaboration, mentorship, and company culture cannot be replicated online. Others believe remote work offers a better work-life balance and greater personal freedom. Which do you think is the better arrangement — remote work or working in a traditional office? Why?', target:'Target: 120–180 words', sampleKey:'remote'},
+  {text:'Artificial intelligence is increasingly being used in healthcare, education, hiring, and the justice system. Proponents argue AI improves efficiency, reduces human error, and can help solve problems that are too complex for humans alone. Critics warn that AI systems can embed existing biases, eliminate jobs, and make high-stakes decisions without meaningful human oversight. Do you think the development of AI is more likely to benefit or harm society in the long run? Why?', target:'Target: 120–180 words', sampleKey:'sat'},
+];
+
+const _CET = [
+  {text:'Studying alone allows you to set your own pace and focus without distractions. Studying in a group lets you share ideas and get help from others. Which do you prefer — studying alone or studying with others? Why?', target:'Target: ≤ 150 words', sampleKey:'cet4'},
+  {text:'City life offers more career opportunities, entertainment, and modern conveniences, but it also comes with higher living costs and a more stressful pace. Smaller towns and rural areas are quieter and more affordable, but offer fewer job options. Which do you prefer — living in a city or a smaller, quieter place?', target:'Target: ≤ 150 words', sampleKey:'cet4'},
+  {text:'Online classes allow you to study at any time from anywhere and give you more control over your schedule. Traditional classroom learning provides direct interaction with teachers and classmates. Which do you prefer — learning online or learning in a classroom? Why?', target:'Target: ≤ 150 words', sampleKey:'cet4'},
+  {text:'Some university students work part-time to earn money and gain real-world experience. Others focus entirely on their studies to get better grades and graduate on time. Which approach do you think is better for a university student, and why?', target:'Target: ≤ 150 words', sampleKey:'cet4'},
+  {text:'Having a few very close friends means deeper trust and stronger support. Having a wider circle of many friends and acquaintances means more connections and social opportunities. Which do you think is more valuable — a small group of close friends or a larger network of acquaintances? Why?', target:'Target: ≤ 150 words', sampleKey:'cet4'},
+  {text:'Large, established companies offer stable salaries, clear career paths, and structured training programs. Small startups offer more responsibility, faster learning, and the chance to have a bigger impact early on. If you were choosing your first job after graduation, which would you prefer — a large company or a small startup? Why?', target:'Target: ≤ 150 words', sampleKey:'cet4'},
+  {text:'Some people prefer to spend their free time alone — reading, gaming, or pursuing personal hobbies. Others prefer to spend it with friends and family. Which do you prefer — spending free time alone or with others? Why?', target:'Target: ≤ 150 words', sampleKey:'cet4'},
+];
+
 const WRITING_POOL = {
-  toefl:[
-    {text:'Some people believe that globalization has brought more benefits than problems to modern society. Others argue the opposite.',target:'Target: 120–180 words',sampleKey:'glob'},
-    {text:'Some people argue that university education should be entirely funded by the government and free for all students. Others believe students should bear the cost themselves.',target:'Target: 120–180 words',sampleKey:'uni'},
-    {text:'Social media platforms have transformed how people communicate and share information. Do you believe the benefits of social media outweigh its drawbacks?',target:'Target: 120–180 words',sampleKey:'social'},
-    {text:'Some argue that technological innovation is the most effective solution to climate change. Others believe changing individual behavior and consumption habits is more important.',target:'Target: 120–180 words',sampleKey:'tech'},
-    {text:'The rise of remote work has permanently changed workplace culture in many industries. Do you believe remote work is preferable to a traditional office environment?',target:'Target: 120–180 words',sampleKey:'remote'},
-  ],
-  ielts:[
-    {text:'Some people believe that globalization has brought more benefits than problems to modern society. Others argue the opposite.',target:'Target: 120–180 words',sampleKey:'glob'},
-    {text:'Some people argue that university education should be entirely funded by the government and free for all students. Others believe students should bear the cost themselves.',target:'Target: 120–180 words',sampleKey:'uni'},
-    {text:'Social media platforms have transformed how people communicate and share information. Do you believe the benefits of social media outweigh its drawbacks?',target:'Target: 120–180 words',sampleKey:'social'},
-    {text:'Some argue that technological innovation is the most effective solution to climate change. Others believe changing individual behavior and consumption habits is more important.',target:'Target: 120–180 words',sampleKey:'tech'},
-    {text:'The rise of remote work has permanently changed workplace culture in many industries. Do you believe remote work is preferable to a traditional office environment?',target:'Target: 120–180 words',sampleKey:'remote'},
-  ],
-  sat:[
-    {text:'Some argue that artificial intelligence will ultimately benefit society by improving efficiency and solving complex problems. Others warn that AI poses significant risks to employment, privacy, and human autonomy.',target:'Target: 150–200 words',sampleKey:'sat'},
-  ],
-  cet6:[
-    {text:'Campus life today is heavily influenced by digital technology. Is this influence on students\' academic and social development largely positive or negative?',target:'Target: ≤ 150 words',sampleKey:'cet6'},
-  ],
-  cet4:[
-    {text:'Do you prefer studying alone or studying in a group?',target:'Target: ≤ 150 words',sampleKey:'cet4'},
-  ],
+  toefl:  _ACAD,
+  ielts:  _ACAD,
+  sat:    _ACAD,
+  cet6:   _CET,
+  cet4:   _CET,
 };
 
 const WRITING_SAMPLES = {
