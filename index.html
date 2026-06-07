@@ -419,28 +419,28 @@ mark.mh{background:#F0C060;color:var(--ink);border-radius:3px;padding:0 2px}
       <div class="wi-section">
         <div class="wi-sec-title">Structure &amp; Scoring</div>
         <div class="wi-task-block" id="wi-mcq-row">
-          <div class="wi-task-name">Grammar &amp; Editing MCQ</div>
+          <div class="wi-task-name">Module 1 — Grammar &amp; Editing MCQ</div>
           <div class="wi-task-time">2 minutes, 30 seconds</div>
           <div class="wi-task-meta">5 questions · equally weighted</div>
           <div class="wi-task-pct">25% of total Writing Section score</div>
         </div>
         <div class="wi-task-block">
-          <div class="wi-task-name">Essay Task</div>
+          <div class="wi-task-name">Module 2 — Essay Task</div>
           <div class="wi-task-time">10 minutes</div>
           <div class="wi-task-meta">1 question · AI-graded</div>
           <div class="wi-task-pct">75% of total Writing Section score</div>
         </div>
       </div>
       <div class="wi-section">
-        <div class="wi-sec-title">Scoring Scale</div>
-        <div style="font-size:.72rem;color:var(--ink-muted);margin-bottom:.5rem">AI score × 15 = essay points &nbsp;(e.g. 4 × 15 = 60 pts)</div>
-        <div style="display:flex;flex-direction:column;gap:.3rem;font-size:.82rem">
-          <div style="display:flex;gap:.7rem;align-items:baseline"><span style="font-weight:700;min-width:2.8rem;color:var(--ink)">5 / 75</span><span style="color:var(--ink-mid)">Clear position; compelling, well-developed argument; fluent and accurate language throughout</span></div>
-          <div style="display:flex;gap:.7rem;align-items:baseline"><span style="font-weight:700;min-width:2.8rem;color:var(--ink)">4 / 60</span><span style="color:var(--ink-mid)">Clear position; solid argument with traceable reasoning; mostly accurate, minor errors</span></div>
-          <div style="display:flex;gap:.7rem;align-items:baseline"><span style="font-weight:700;min-width:2.8rem;color:var(--ink)">3 / 45</span><span style="color:var(--ink-mid)">Position stated; at least one supporting point with some reasoning; occasional noticeable errors</span></div>
-          <div style="display:flex;gap:.7rem;align-items:baseline"><span style="font-weight:700;min-width:2.8rem;color:var(--ink)">2 / 30</span><span style="color:var(--ink-mid)">Weak or vague position; limited development; frequent errors that impede meaning</span></div>
-          <div style="display:flex;gap:.7rem;align-items:baseline"><span style="font-weight:700;min-width:2.8rem;color:var(--ink)">1 / 15</span><span style="color:var(--ink-mid)">Bare thesis only; no supporting argument; significant language problems</span></div>
-          <div style="display:flex;gap:.7rem;align-items:baseline"><span style="font-weight:700;min-width:2.8rem;color:var(--ink)">0 / 0</span><span style="color:var(--ink-mid)">Off-topic, blank, or incomprehensible</span></div>
+        <div class="wi-sec-title" id="wi-scale-title">Module 2 Scoring Scale</div>
+        <div style="font-size:.72rem;color:var(--ink-muted);margin-bottom:.5rem" id="wi-scale-formula">AI score × 15 (%) = Module 2 percentage</div>
+        <div style="display:flex;flex-direction:column;gap:.3rem;font-size:.82rem" id="wi-scale-rows">
+          <div style="display:flex;gap:.7rem;align-items:baseline"><span class="wi-scale-val" style="font-weight:700;min-width:3.2rem;color:var(--ink)">5 · 75%</span><span style="color:var(--ink-mid)">Clear position; compelling, well-developed argument; fluent and accurate language throughout</span></div>
+          <div style="display:flex;gap:.7rem;align-items:baseline"><span class="wi-scale-val" style="font-weight:700;min-width:3.2rem;color:var(--ink)">4 · 60%</span><span style="color:var(--ink-mid)">Clear position; solid argument with traceable reasoning; mostly accurate, minor errors</span></div>
+          <div style="display:flex;gap:.7rem;align-items:baseline"><span class="wi-scale-val" style="font-weight:700;min-width:3.2rem;color:var(--ink)">3 · 45%</span><span style="color:var(--ink-mid)">Position stated; at least one supporting point with some reasoning; occasional noticeable errors</span></div>
+          <div style="display:flex;gap:.7rem;align-items:baseline"><span class="wi-scale-val" style="font-weight:700;min-width:3.2rem;color:var(--ink)">2 · 30%</span><span style="color:var(--ink-mid)">Weak or vague position; limited development; frequent errors that impede meaning</span></div>
+          <div style="display:flex;gap:.7rem;align-items:baseline"><span class="wi-scale-val" style="font-weight:700;min-width:3.2rem;color:var(--ink)">1 · 15%</span><span style="color:var(--ink-mid)">Bare thesis only; no supporting argument; significant language problems</span></div>
+          <div style="display:flex;gap:.7rem;align-items:baseline"><span class="wi-scale-val" style="font-weight:700;min-width:3.2rem;color:var(--ink)">0 · 0%</span><span style="color:var(--ink-mid)">Off-topic, blank, or incomprehensible</span></div>
         </div>
       </div>
       <div class="wi-section">
@@ -1291,6 +1291,17 @@ function showWritingIntro() {
   const subLbl = document.getElementById('wi-sub-lbl');
   if (mcqRow) mcqRow.style.display = S.writingOnly ? 'none' : '';
   if (subLbl) subLbl.textContent = S.writingOnly ? 'Essay Only' : 'Section 4 of 4';
+
+  const scaleTitle   = document.getElementById('wi-scale-title');
+  const scaleFormula = document.getElementById('wi-scale-formula');
+  const scaleRows    = document.querySelectorAll('#wi-scale-rows .wi-scale-val');
+  const pcts = S.writingOnly
+    ? ['5 · 100%','4 · 80%','3 · 60%','2 · 40%','1 · 20%','0 · 0%']
+    : ['5 · 75%','4 · 60%','3 · 45%','2 · 30%','1 · 15%','0 · 0%'];
+  if (scaleTitle)   scaleTitle.textContent   = S.writingOnly ? 'Essay Scoring Scale' : 'Module 2 Scoring Scale';
+  if (scaleFormula) scaleFormula.textContent = S.writingOnly ? 'AI score × 20 (%) = Your score' : 'AI score × 15 (%) = Module 2 percentage';
+  scaleRows.forEach((el, i) => { el.textContent = pcts[i]; });
+
   show('screen-writing-intro');
 }
 
@@ -1691,7 +1702,7 @@ function showWritingEval(sc, ai, errMsg) {
   const essayPts = S.writingScore || 0;
   const secTotal = sectionPct(3);
   const detailStr = S.writingOnly
-    ? 'Essay: ' + essayPts + '/75 · Section: ' + secTotal + '%'
+    ? 'Writing Score: ' + secTotal + '%'
     : 'MCQ: ' + mcqPts + '/25 · Essay: ' + essayPts + '/75 · Section: ' + secTotal + '%';
 
   if (!ai) {
