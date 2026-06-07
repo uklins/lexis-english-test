@@ -428,7 +428,7 @@ mark.mh{background:#F0C060;color:var(--ink);border-radius:3px;padding:0 2px}
           <div class="wi-task-name">Module 2 — Essay Task</div>
           <div class="wi-task-time">10 minutes</div>
           <div class="wi-task-meta">1 question · AI-graded</div>
-          <div class="wi-task-pct">75% of total Writing Section score</div>
+          <div class="wi-task-pct" id="wi-essay-pct">75% of total Writing Section score</div>
         </div>
       </div>
       <div class="wi-section">
@@ -1289,8 +1289,17 @@ function startWritingOnly() {
 function showWritingIntro() {
   const mcqRow = document.getElementById('wi-mcq-row');
   const subLbl = document.getElementById('wi-sub-lbl');
+  const essayPct = document.getElementById('wi-essay-pct');
   if (mcqRow) mcqRow.style.display = S.writingOnly ? 'none' : '';
-  if (subLbl) subLbl.textContent = S.writingOnly ? 'Essay Only' : 'Section 4 of 4';
+  if (essayPct) essayPct.style.display = S.writingOnly ? 'none' : '';
+  if (subLbl) {
+    subLbl.textContent = S.writingOnly ? 'Essay Only' : 'Section 4 of 4';
+    subLbl.style.fontSize    = S.writingOnly ? '1.1rem' : '';
+    subLbl.style.color       = S.writingOnly ? 'var(--ink)' : '';
+    subLbl.style.fontWeight  = S.writingOnly ? '500' : '';
+    subLbl.style.letterSpacing = S.writingOnly ? '.02em' : '';
+    subLbl.style.textTransform = S.writingOnly ? 'none' : '';
+  }
 
   const scaleTitle   = document.getElementById('wi-scale-title');
   const scaleFormula = document.getElementById('wi-scale-formula');
