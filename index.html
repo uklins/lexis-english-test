@@ -1296,7 +1296,7 @@ function showWritingIntro() {
   const scaleFormula = document.getElementById('wi-scale-formula');
   const scaleRows    = document.querySelectorAll('#wi-scale-rows .wi-scale-val');
   const pcts = S.writingOnly
-    ? ['5 · 100%','4 · 80%','3 · 60%','2 · 40%','1 · 20%','0 · 0%']
+    ? ['5 · Full','4 · 80%','3 · 60%','2 · 40%','1 · 20%','0 · 0%']
     : ['5 · 75%','4 · 60%','3 · 45%','2 · 30%','1 · 15%','0 · 0%'];
   if (scaleTitle)   scaleTitle.textContent   = S.writingOnly ? 'Essay Scoring Scale' : 'Module 2 Scoring Scale';
   if (scaleFormula) scaleFormula.textContent = S.writingOnly ? 'AI score × 20 (%) = Your score' : 'AI score × 15 (%) = Module 2 percentage';
