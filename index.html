@@ -595,6 +595,7 @@ mark.mh{background:#F0C060;color:var(--ink);border-radius:3px;padding:0 2px}
         </tbody>
       </table>
       <button class="cont-btn" onclick="continueFromWriting()">Continue →</button>
+      <button id="retest-writing-btn" onclick="retestWritingQuestion()" class="skip-btn" style="display:none;width:100%;margin-top:.6rem;padding:.65rem;font-size:.78rem;text-align:center">Retest This Question</button>
     </div>
   </div>
 </div>
@@ -1741,7 +1742,32 @@ function showWritingEval(sc, ai, errMsg) {
     }
   }
 
+  const retestBtn = document.getElementById('retest-writing-btn');
+  if (retestBtn) retestBtn.style.display = S.writingOnly ? '' : 'none';
+
   show('screen-writing-eval');
+}
+
+function retestWritingQuestion() {
+  clearInterval(essayTimerInterval);
+  document.getElementById('modal-essay-locked').style.display = 'none';
+  const areaEl = document.getElementById('essay-area');
+  if (areaEl) { areaEl.disabled = false; areaEl.value = ''; }
+  document.getElementById('writing-wc').textContent = '0 words';
+  const submitBtnInit = document.querySelector('.submit-essay-btn');
+  if (submitBtnInit) { submitBtnInit.disabled = false; submitBtnInit.classList.remove('over-limit'); }
+  S.writingScore = null;
+  S.writingText = '';
+  essaySecs = 600;
+  updateEssayTimer();
+  const reduceBtn = document.getElementById('reduce-timer-btn');
+  if (reduceBtn) reduceBtn.style.display = '';
+  show('screen-writing-task');
+  essayTimerInterval = setInterval(() => {
+    essaySecs--;
+    updateEssayTimer();
+    if (essaySecs <= 0) { clearInterval(essayTimerInterval); doSubmitEssay(true); }
+  }, 1000);
 }
 
 function continueFromWriting() { endSection(); }
