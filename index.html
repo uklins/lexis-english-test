@@ -280,6 +280,12 @@ mark.mh{background:#F0C060;color:var(--ink);border-radius:3px;padding:0 2px}
 .pt-row{display:flex;align-items:flex-start;justify-content:space-between;gap:1rem;padding:.25rem 0;font-size:.84rem;color:var(--ink-mid)}
 .pt-val{font-weight:600;color:var(--ink);white-space:nowrap;text-align:right;flex-shrink:0}
 .pt-credit{text-align:center;font-size:.72rem;color:var(--ink-muted);margin-top:.9rem;letter-spacing:.04em}
+.pt-sec-row{display:flex;gap:1rem;padding:.45rem 0;border-bottom:1px solid var(--border-light)}
+.pt-sec-row:last-child{border-bottom:none}
+.pt-sec-name{font-weight:700;font-size:.86rem;color:var(--ink);min-width:82px;flex-shrink:0;padding-top:.05rem}
+.pt-sec-modules{font-size:.82rem;color:var(--ink);display:flex;flex-direction:column;gap:.18rem}
+.pt-ctrl-preview{display:flex;justify-content:flex-end;gap:.5rem;background:var(--border-light);border:1px solid var(--border);border-radius:8px;padding:.45rem .7rem;margin:.5rem 0 .45rem}
+.pt-ctrl-desc{display:flex;flex-direction:column;gap:.18rem;font-size:.79rem;color:var(--ink-mid)}
 /* WRITING INTRO SCREEN */
 #screen-writing-intro{align-items:center;justify-content:center;padding:2rem}
 .writing-intro-card{max-width:420px;width:100%;background:var(--card);border:1px solid var(--border);border-radius:20px;padding:2.4rem 2.2rem;box-shadow:var(--shadow-lg)}
@@ -394,15 +400,45 @@ mark.mh{background:#F0C060;color:var(--ink);border-radius:3px;padding:0 2px}
       </div>
       <div class="pt-section">
         <div class="pt-title">Four Sections</div>
-        <div class="pt-row"><div><div>📖 Vocabulary</div><div style="font-size:.72rem;color:var(--ink-muted);margin-top:.1rem">2:30 per module</div></div><span class="pt-val">M1: 5 MCQ → M2: 5 MCQ</span></div>
-        <div class="pt-row"><div><div>✏️ Grammar</div><div style="font-size:.72rem;color:var(--ink-muted);margin-top:.1rem">2:30 per module</div></div><span class="pt-val">M1: 5 MCQ → M2: 5 MCQ</span></div>
-        <div class="pt-row"><div><div>🔍 Reading</div><div style="font-size:.72rem;color:var(--ink-muted);margin-top:.1rem">4:00 per module</div></div><span class="pt-val">M1: 5 passages → M2: 5 passages</span></div>
-        <div class="pt-row"><div><div>📝 Writing</div><div style="font-size:.72rem;color:var(--ink-muted);margin-top:.1rem">MCQ: 2:30 · Essay: 10 min</div></div><span class="pt-val">M1: 5 MCQ → Essay Task</span></div>
+        <div class="pt-sec-row">
+          <div class="pt-sec-name">📖 Vocabulary</div>
+          <div class="pt-sec-modules">
+            <div>Module 1: 5 MCQs (2 minutes, 30 seconds)</div>
+            <div>Module 2: 5 MCQs (2 minutes, 30 seconds)</div>
+          </div>
+        </div>
+        <div class="pt-sec-row">
+          <div class="pt-sec-name">✏️ Grammar</div>
+          <div class="pt-sec-modules">
+            <div>Module 1: 5 MCQs (2 minutes, 30 seconds)</div>
+            <div>Module 2: 5 MCQs (2 minutes, 30 seconds)</div>
+          </div>
+        </div>
+        <div class="pt-sec-row">
+          <div class="pt-sec-name">🔍 Reading</div>
+          <div class="pt-sec-modules">
+            <div>Module 1: 5 passages (4 minutes)</div>
+            <div>Module 2: 5 passages (4 minutes)</div>
+          </div>
+        </div>
+        <div class="pt-sec-row">
+          <div class="pt-sec-name">📝 Writing</div>
+          <div class="pt-sec-modules">
+            <div>Module 1: 5 MCQs (2 minutes, 30 seconds)</div>
+            <div>Module 2: Essay Task (10 minutes)</div>
+          </div>
+        </div>
       </div>
       <div class="pt-section">
         <div class="pt-title">Module Controls</div>
-        <div class="pt-row"><span>⏭ Skip section</span><span class="pt-val" style="font-weight:400;color:var(--ink-muted)">0 pts for entire section</span></div>
-        <div class="pt-row"><span>✓ Submit module</span><span class="pt-val" style="font-weight:400;color:var(--ink-muted)">Finish a module early</span></div>
+        <div class="pt-ctrl-preview">
+          <button class="skip-btn" style="pointer-events:none;cursor:default">Skip</button>
+          <button class="submit-mod-hdr" style="pointer-events:none;cursor:default">Submit →</button>
+        </div>
+        <div class="pt-ctrl-desc">
+          <span><strong>Skip</strong> — skips M1: section scores 0 · skips M2: M1 score preserved</span>
+          <span><strong>Submit →</strong> — finish the current module early</span>
+        </div>
       </div>
       <div style="background:#FBE8E8;border:1.5px solid #D94F4F;border-radius:var(--r);padding:.85rem 1.1rem;margin-top:1.4rem">
         <div style="font-size:.72rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#8B1F1F;margin-bottom:.3rem">⚠ Do Not Refresh</div>
