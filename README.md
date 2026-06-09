@@ -4,7 +4,7 @@ A free, browser-based adaptive English test for learners preparing for **TOEFL**
 
 **Created by 洛可薇Leachoy**
 
-**Live site:** https://uklins.github.io/english-test.github.io/
+**Live site:** https://uklins.github.io/lexis-english-test/
 
 ## What it does
 
