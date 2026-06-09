@@ -32,6 +32,7 @@ h1,h2,h3{font-family:'Cormorant Garamond',Georgia,serif;line-height:1.2}
 .brand-author{font-size:.95rem;font-weight:600;color:var(--ink);margin-bottom:.3rem}
 .brand-project{font-size:.95rem;font-style:italic;color:var(--ink);margin-bottom:1.4rem}
 .exam-btn.unavailable{opacity:.38;cursor:not-allowed;pointer-events:none}
+.exam-btn.refinement{opacity:.5;cursor:not-allowed;pointer-events:none;border-color:#E8C97A;background:#FEFAEE}
 .divider{width:44px;height:2px;background:var(--accent);margin-bottom:1.8rem}
 .intro-body{font-size:.88rem;color:var(--ink-mid);line-height:1.85;margin-bottom:.55rem}
 .intro-meta{display:flex;gap:1.5rem;flex-wrap:wrap;margin-top:1.8rem;margin-bottom:2.2rem}
@@ -345,9 +346,9 @@ mark.mh{background:#F0C060;color:var(--ink);border-radius:3px;padding:0 2px}
       <div class="exam-grid">
         <button class="exam-btn" data-exam="toefl" onclick="selectExam(this)"><span class="en">TOEFL</span><span class="cn">iBT 托福</span></button>
         <button class="exam-btn" data-exam="ielts" onclick="selectExam(this)"><span class="en">IELTS</span><span class="cn">雅思</span></button>
-        <button class="exam-btn" data-exam="cet6" onclick="selectExam(this)"><span class="en">CET-6</span><span class="cn">六级</span></button>
-        <button class="exam-btn" data-exam="cet4" onclick="selectExam(this)"><span class="en">CET-4</span><span class="cn">四级</span></button>
-        <button class="exam-btn unavailable" data-exam="sat"><span class="en">SAT</span><span class="cn">Coming soon</span></button>
+        <button class="exam-btn refinement"><span class="en">CET-6</span><span class="cn">Under refinement</span></button>
+        <button class="exam-btn refinement"><span class="en">CET-4</span><span class="cn">Under refinement</span></button>
+        <button class="exam-btn refinement"><span class="en">SAT</span><span class="cn">Under refinement</span></button>
         <button class="exam-btn unavailable"><span class="en">AP Lang</span><span class="cn">Coming soon</span></button>
         <button class="exam-btn unavailable"><span class="en">Gaokao</span><span class="cn">高考 · Coming soon</span></button>
         <button class="exam-btn unavailable"><span class="en">Kaoyan</span><span class="cn">考研 · Coming soon</span></button>
