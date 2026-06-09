@@ -495,9 +495,12 @@ mark.mh{background:#F0C060;color:var(--ink);border-radius:3px;padding:0 2px}
       </div>
       <div class="wi-section">
         <div class="wi-sec-title">Submission</div>
-        <div class="wi-rubric-row"><span class="wi-rubric-dot">●</span><span>A <strong>submission code</strong> is required. You will be asked for it when you click <strong>Submit Essay →</strong> or when the <strong>timer expires</strong> — there is no code field on the writing page.</span></div>
+        <div class="wi-rubric-row"><span class="wi-rubric-dot">●</span><span>A <strong>submission code</strong> is required. You will be asked for it when you click <strong>Submit Essay →</strong> or when the <strong>timer expires</strong> — no need to think about the code while writing.</span></div>
         <div class="wi-rubric-row"><span class="wi-rubric-dot">●</span><span>Grading takes approximately <strong>5–15 seconds</strong>. Do not close the page.</span></div>
         <div class="wi-rubric-row"><span class="wi-rubric-dot">●</span><span>Target: <strong>120–180 words</strong> (TOEFL/IELTS) · <strong>≤ 150 words</strong> (CET). Hard limit: <strong>200 words</strong> — essays over this cannot be submitted.</span></div>
+      </div>
+      <div style="background:var(--accent-light);border:1px solid #F0C890;border-radius:8px;padding:.65rem .9rem;font-size:.78rem;color:var(--accent-dark);margin-top:.2rem;line-height:1.65">
+        💡 <strong>Do not worry about the submission code during writing time — focus entirely on your essay.</strong> The code prompt will only appear when you choose to submit or when time runs out.
       </div>
       <button class="cont-btn" onclick="startWritingSection()" style="width:100%;margin-top:1rem">Begin Writing Test →</button>
       <button class="skip-writing-link" onclick="confirmSkipWriting()">Skip Writing — I don't have a submission code</button>
@@ -556,17 +559,21 @@ mark.mh{background:#F0C060;color:var(--ink);border-radius:3px;padding:0 2px}
       <div class="bridge-path-badge" id="bridge-path-badge">Advanced Module</div>
       <p class="bridge-msg" id="bridge-msg">Strong start — you've unlocked the Advanced Module.</p>
       <div id="bridge-essay-info" style="display:none;text-align:left;margin-bottom:1.8rem">
-        <div style="font-size:.68rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-muted);margin-bottom:.4rem">Essay Scoring (0–5)</div>
-        <div style="font-size:.77rem;color:var(--ink-mid);line-height:1.7;margin-bottom:.65rem">
-          <div>5 · Compelling argument; fluent and accurate language</div>
-          <div>4 · Solid reasoning; mostly accurate, minor errors</div>
-          <div>3 · Some reasoning; occasional noticeable errors</div>
-          <div>2 · Limited development; frequent errors</div>
-          <div>1 · Bare thesis only; significant language problems</div>
-          <div>0 · Off-topic, blank, or incomprehensible</div>
+        <div style="border-top:1px solid var(--border);padding-top:.8rem;margin-bottom:.45rem">
+          <div style="font-size:.68rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-muted);margin-bottom:.45rem">Essay Scoring (0–5)</div>
+          <div style="font-size:.77rem;color:var(--ink-mid);line-height:1.8">
+            <div><strong style="color:var(--ink);min-width:1.1rem;display:inline-block">5</strong> · Clear position; compelling, well-developed argument with traceable reasoning; fluent and accurate language</div>
+            <div><strong style="color:var(--ink);min-width:1.1rem;display:inline-block">4</strong> · Clear position; solid logical chain; mostly accurate, minor errors acceptable</div>
+            <div><strong style="color:var(--ink);min-width:1.1rem;display:inline-block">3</strong> · Position stated; at least one supporting point with reasoning; occasional noticeable errors</div>
+            <div><strong style="color:var(--ink);min-width:1.1rem;display:inline-block">2</strong> · Weak or vague position; limited development; frequent errors that impede meaning</div>
+            <div><strong style="color:var(--ink);min-width:1.1rem;display:inline-block">1</strong> · Bare thesis only, no argument developed; significant language problems</div>
+            <div><strong style="color:var(--ink);min-width:1.1rem;display:inline-block">0</strong> · Off-topic, blank, or incomprehensible</div>
+          </div>
         </div>
-        <div style="padding:.55rem .8rem;background:var(--accent-light);border:1px solid #F0C890;border-radius:7px;font-size:.78rem;color:var(--accent-dark);line-height:1.65">
-          🔑 Your <strong>submission code</strong> will be requested when you click <strong>Submit Essay →</strong> or when the timer expires.
+        <div style="border-top:1px solid var(--border);padding-top:.7rem">
+          <div style="padding:.55rem .8rem;background:var(--accent-light);border:1px solid #F0C890;border-radius:7px;font-size:.78rem;color:var(--accent-dark);line-height:1.65">
+            🔑 Your <strong>submission code</strong> will be requested when you click <strong>Submit Essay →</strong> or when the timer expires — focus on writing until then.
+          </div>
         </div>
       </div>
       <button class="cont-btn" id="bridge-btn" onclick="startModule2()">Begin Module 2 →</button>
